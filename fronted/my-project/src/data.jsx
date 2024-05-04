@@ -1,32 +1,35 @@
 
 import { nanoid } from 'nanoid';
-import { FaHtml5, FaJs, FaReact } from 'react-icons/fa';
+import { LuFileSpreadsheet } from "react-icons/lu";
+import { CiLogin } from "react-icons/ci";
+import { IoIosNotifications } from "react-icons/io";
+
 
 export const links = [
   { id: nanoid(), href: '#home', text: 'Home' },
   { id: nanoid(), href: '#start', text: 'Start' },
-  { id: nanoid(), href: '#contact', text: 'Contact' },
+  { id: nanoid(), href: '#about', text: 'About' },
   { id: nanoid(), href: '#more', text: 'More' },
 ];
 
-export const skills = [
+export const start = [
   {
     id: nanoid(),
-    title: 'HTML&CSS',
-    icon: <FaHtml5 className='h-16 w-16 text-emerald-500' />,
-    text: 'Highly skilled in HTML & CSS, adeptly crafting visually appealing and responsive websites for optimal user experiences.',
+    title: 'Log in/Sign in',
+    icon: <CiLogin className='h-16 w-16 text-emerald-500' />,
+    text: 'First, you need to log in or sign in.',
   },
   {
     id: nanoid(),
-    title: 'Javascript',
-    icon: <FaJs className='h-16 w-16 text-emerald-500' />,
-    text: 'Expertise in JavaScript, building interactive and dynamic web applications with a focus on seamless user interactions and functionality',
+    title: 'Insert Data',
+    icon: <LuFileSpreadsheet className='h-16 w-16 text-emerald-500' />,
+    text: 'Second, you need to input your inventory data.',
   },
   {
     id: nanoid(),
-    title: 'React',
-    icon: <FaReact className='h-16 w-16 text-emerald-500' />,
-    text: 'Advanced proficiency in React, developing efficient and interactive front-end applications with a strong emphasis on component-based architecture.',
+    title: 'Notifications and Payment',
+    icon: <IoIosNotifications className='h-16 w-16 text-emerald-500' />,
+    text: 'Wait for updates and proceed with the payment.',
   },
 ];
 
