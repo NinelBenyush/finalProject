@@ -23,8 +23,6 @@ class main:
 
     prepare_to_model = prepare_LSTM(final_data)
     x_train, x_test = prepare_to_model.split_data()
-    print(x_test.shape)
-    print(x_train.shape)
 
 
 if __name__ == "__main__":
