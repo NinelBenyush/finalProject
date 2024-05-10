@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
-import tensorflow as tf
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader, TensorDataset
 
 
 class prepare_LSTM:
@@ -15,36 +15,38 @@ class prepare_LSTM:
         new_data = np.array(self.data['Value'])
         x_data, y_data = [], []
 
-        for i in range(len(new_data) - self.seq+1):
-            x_data.append(new_data[i:i + self.seq])
-            y_data.append(new_data[i + self.seq-1])
+        for product_id, group_data in self.data.groupby('code_p'):
+            product_values = group_data['Value'].values
+            for i in range(len(product_values) - self.seq):
+                x_data.append(product_values[i:i + self.seq])
+                y_data.append(product_values[i + self.seq])
 
         x_data, y_data = np.array(x_data), np.array(y_data)
 
         train_size = int(len(self.data) * 0.8)
-        x_train, y_train = x_data[:train_size], y_data[:train_size]
-        x_test, y_test = x_data[train_size:], y_data[train_size:]
+        x_train, y_train = torch.tensor(x_data[:train_size]).float(), torch.tensor(y_data[:train_size]).float()
+        x_test, y_test = torch.tensor(x_data[train_size:]).float(), torch.tensor(y_data[train_size:]).float()
 
         return x_train, y_train, x_test, y_test
 
-class LSTM:
-    def __init__(self):
-        self.num_features = 1
-        self.seq = 3
-        self.model = self.create_lstm()
+class LSTM(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size, num_layers=1):
+        super(LSTM, self).__init__()
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
 
-    def create_lstm(self):
-        model = Sequential([
-            LSTM(1, activation='relu', input_shape=(self.seq_length, self.num_features)),
-            Dense(1)
-        ])
-        return model
-
+    def forward(self,x):
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
+        out, _ = self.lstm(x, (h0, c0))
+        out = self.fc(out[:, -1, :])
+        return out
 
 
 class main:
     data = pd.read_csv("prediction_data.csv")
-    print(tf.__version__)
 
     month_map = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
                  7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'}
@@ -54,8 +56,27 @@ class main:
 
     prepare_to_model = prepare_LSTM(final_data)
     x_train, y_train, x_test, y_test = prepare_to_model.split_data_and_seq()
-    lstm_model = LSTM()
+
+    model = LSTM(input_size=1, hidden_size=1, output_size=1)
+
+    criterion = nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+    num_epochs = 100
+    for epoch in range(num_epochs):
+        optimizer.zero_grad()
+        outputs = model(x_train.unsqueeze(2))
+        loss = criterion(outputs.squeeze(), y_train)
+        loss.backward()
+        optimizer.step()
+        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item()}')
+
+
+
 
 
 if __name__ == "__main__":
     main()
+
+
+
