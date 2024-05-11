@@ -14,11 +14,15 @@ class prepare_LSTM:
 
     def split_data_and_seq(self):
         new_data = np.array(self.data['Value'])
+        inventory_values = np.array(self.data['Inventory'])
         x_data, y_data = [], []
 
         for i in range(len(new_data) - self.seq + 1):
             x_data.append(new_data[i:i + self.seq])
             y_data.append(new_data[i + self.seq - 1])
+
+        for i in range(self.seq - 1, len(new_data)):
+            y_data[i - self.seq + 1] = inventory_values[i]
 
         x_data, y_data = np.array(x_data), np.array(y_data)
 
@@ -100,20 +104,36 @@ class main:
     trainer.train_model(x_train, y_train)
     predictions = trainer.predict(x_test)
 
+    sum_predictions = []
+    for i in range(0, len(predictions), 12):
+        sum_predictions.append(sum(predictions[i:i+12]))
+
+    # Normalize the sum of predictions
+    max_sum_prediction = max(sum_predictions)
+    min_sum_prediction = min(sum_predictions)
+    sum_predictions_normalized = []
+    for sum_pred in sum_predictions:
+        normalized_value = (sum_pred - min_sum_prediction) / (max_sum_prediction - min_sum_prediction)
+        sum_predictions_normalized.append(normalized_value)
+
+    # Compare the sum of every 12 predictions with the inventory values
+    for i in range(0, len(predictions), 12):
+        sum_prediction = sum(predictions[i:i+12])  # Calculate sum for this interval
+        sum_inventory = y_test[i].item()           # Get inventory sum for this interval
+
     # Evaluate and plot the model's performance
     y_test = y_test.numpy()
     rmse = np.sqrt(mean_squared_error(y_test, predictions))
     print(f"Root Mean Squared Error: {rmse:.2f}")
 
     plt.figure(figsize=(12, 6))
-    plt.plot(y_test, label='Actual')
-    plt.plot(predictions, label='Predicted')
-    plt.xlabel('Time')
-    plt.ylabel('Value')
-    plt.title('Actual vs Predicted Values')
+    plt.plot(range(0, len(predictions), 12), sum_predictions_normalized, label='Sum of Predictions (Normalized)')
+    plt.plot(range(0, len(predictions), 12), y_test[::12], label='Inventory')
+    plt.xlabel('Time (in 12-month intervals)')
+    plt.ylabel('Sum (Normalized)')
+    plt.title('Comparison of Sum of Predictions and Inventory')
     plt.legend()
     plt.show()
-
 
 if __name__ == "__main__":
     main()
