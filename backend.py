@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import torch
 import torch.nn as nn
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 
@@ -13,8 +14,8 @@ class prepare_LSTM:
         self.num_features = 1
 
     def split_data_and_seq(self):
-        new_data = np.array(self.data['Value'])
-        inventory_values = np.array(self.data['Inventory'])
+        new_data = np.array(self.data[:, -2])  # Access the 'Value' column, which is one before the last column
+        inventory_values = self.data[:, 1]
         x_data, y_data = [], []
 
         for i in range(len(new_data) - self.seq + 1):
@@ -75,18 +76,40 @@ class ModelTrainer:
 
 
 class main:
-    data = pd.read_csv("prediction_data.csv")
+    data = pd.read_csv("final_data_prediction.csv")
 
-    month_map = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
-                 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'}
+    month_map_reverse = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6,
+                         'July': 7, 'August': 8, 'September': 9, 'October': 10, 'Novermber': 11, 'December': 12}
 
-    data['Month'] = data['Month'].map(month_map)
+    data['Month'] = data['Month'].map(month_map_reverse)
     data['Year'] = 2023
-    data['Date'] = pd.to_datetime(data['Month'] + ' ' + data['Year'].astype(str), format='%B %Y')
+    data['Date'] = pd.to_datetime(data['Month'].astype(str) + ' ' + data['Year'].astype(str), format='%m %Y')
     data.set_index('Date', inplace=True)
 
-    prepare_to_model = prepare_LSTM(data)
+    data.drop(columns=['Unnamed: 0'], inplace=True)
+    print(data)
+
+    scaler = MinMaxScaler()
+    data_normalized = scaler.fit_transform(data)
+
+    prepare_to_model = prepare_LSTM(data_normalized)
     x_train, y_train, x_test, y_test = prepare_to_model.split_data_and_seq()
+
+    input_size = 1
+    hidden_size = 50
+    num_layers = 1
+    output_size = 1
+    model = LSTM(input_size, hidden_size, num_layers, output_size)
+
+    learning_rate = 0.01
+    num_epochs = 100
+
+    criterion = nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+    trainer = ModelTrainer(model, criterion, optimizer, num_epochs)
+    trainer.train_model(x_train, y_train)
+    predictions = trainer.predict(x_test)
 
     input_size = 1
     hidden_size = 50
@@ -134,6 +157,7 @@ class main:
     plt.title('Comparison of Sum of Predictions and Inventory')
     plt.legend()
     plt.show()
+
 
 if __name__ == "__main__":
     main()
