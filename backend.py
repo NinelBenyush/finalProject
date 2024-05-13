@@ -9,17 +9,20 @@ from sklearn.preprocessing import MinMaxScaler
 
 class prepare_LSTM:
     def __init__(self, data):
-        self.seq=3
+        self.seq =3
         self.data = data
         self.num_features = 1
         self.scaler = None
 
     def split_data(self):
-        train_size = int(len(self.data) * 0.8)
-        train_data = self.data[:train_size][['Inventory', 'Value']]
-        test_data = self.data[train_size:][['Inventory', 'Value']]
-        dataset_train = np.reshape(train_data, (-1, 2))  # reshape to get only numeric values
-        dataset_test = np.reshape(test_data, (-1, 2))
+        train_size = int(len(self.data) * 0.8) + 3
+        train_data = self.data[:train_size][['code_p','Inventory', 'Value']]
+        test_data = self.data[train_size:][['code_p','Inventory', 'Value']]
+        dataset_train = np.reshape(train_data, (-1, 3))  # reshape to get only numeric values
+        dataset_test = np.reshape(test_data, (-1, 3))
+        print(dataset_test)
+        print("now")
+        print(dataset_train)
         # here we can also add another columns if we will need to
 
         return dataset_train, dataset_test
@@ -107,15 +110,15 @@ class main:
     prepare_to_lstm = prepare_LSTM(data)
     train_data, test_data = prepare_to_lstm.split_data()
 
-    final_train_data, final_test_data = prepare_to_lstm.data_normalization(train_data, test_data)
+    #final_train_data, final_test_data = prepare_to_lstm.data_normalization(train_data, test_data)
 
     # Inverse to real values
     # inv_train_data = prepare_to_lstm.inverse_transform(final_train_data)
     # inv_test_data = prepare_to_lstm.inverse_transform(final_test_data)
 
-    x_test, y_test = prepare_to_lstm.divide_to_seq(final_test_data)
-    print(x_test)
-    print(y_test)
+    #x_test, y_test = prepare_to_lstm.divide_to_seq(final_test_data)
+    #print(x_test)
+    #print(y_test)
 
 
 
