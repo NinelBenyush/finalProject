@@ -9,12 +9,12 @@ from sklearn.preprocessing import MinMaxScaler
 
 class prepare_LSTM:
     def __init__(self, data):
+        self.seq=3
         self.data = data
-        self.seq = 3
         self.num_features = 1
         self.scaler = None
 
-    def split_data_and_seq(self):
+    def split_data(self):
         train_size = int(len(self.data) * 0.8)
         train_data = self.data[:train_size][['Inventory', 'Value']]
         test_data = self.data[train_size:][['Inventory', 'Value']]
@@ -33,6 +33,18 @@ class prepare_LSTM:
 
     def inverse_transform(self, scaled_data):
         return self.scaler.inverse_transform(scaled_data)
+
+    def divide_to_seq(self,test):
+        x_text, y_test =[], []
+        for i in range(len(test) - self.seq):
+            x_text.append(test[i:i+self.seq])
+            y_test.append(test[i+1:i+self.seq+1])
+        x_test, y_test = np.array(x_text), np.array(y_test)
+        x_test = torch.tensor(x_test, dtype=torch.float32)
+        y_test = torch.tensor(y_test, dtype=torch.float32)
+
+        return x_test, y_test
+
 
 
 class LSTM(nn.Module):
@@ -93,28 +105,18 @@ class main:
     end_date = '2023-12-01'
 
     prepare_to_lstm = prepare_LSTM(data)
-    train_data, test_data = prepare_to_lstm.split_data_and_seq()
-
-    print("before nor train")
-    print(train_data[:5])
-    print("before nor test")
-    print(test_data[:5])
+    train_data, test_data = prepare_to_lstm.split_data()
 
     final_train_data, final_test_data = prepare_to_lstm.data_normalization(train_data, test_data)
 
-    print("Normalized Train Data:")
-    print(final_train_data[:5])
-    print("Normalized Test Data:")
-    print(final_test_data[:5])
+    # Inverse to real values
+    # inv_train_data = prepare_to_lstm.inverse_transform(final_train_data)
+    # inv_test_data = prepare_to_lstm.inverse_transform(final_test_data)
 
-    # Inverse transform
-    inv_train_data = prepare_to_lstm.inverse_transform(final_train_data)
-    inv_test_data = prepare_to_lstm.inverse_transform(final_test_data)
+    x_test, y_test = prepare_to_lstm.divide_to_seq(final_test_data)
+    print(x_test)
+    print(y_test)
 
-    print("Inverse Transformed Train Data:")
-    print(inv_train_data[:5])
-    print("Inverse Transformed Test Data:")
-    print(inv_test_data[:5])
 
 
 
