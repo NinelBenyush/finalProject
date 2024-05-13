@@ -1,13 +1,10 @@
 import pandas as pd
 import numpy as np
-import sns
 import torch
 import torch.nn as nn
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_squared_error
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates # Formatting dates
-
+# from sklearn.metrics import mean_squared_error
+# import matplotlib.pyplot as plt
 
 
 class prepare_LSTM:
@@ -15,18 +12,27 @@ class prepare_LSTM:
         self.data = data
         self.seq = 3
         self.num_features = 1
+        self.scaler = None
 
     def split_data_and_seq(self):
         train_size = int(len(self.data) * 0.8)
-        train_data = self.data[:train_size][['code_p', 'Inventory', 'Value']]
-        test_data = self.data[train_size:][['code_p', 'Inventory', 'Value']]
-        return train_data, test_data
+        train_data = self.data[:train_size][['Inventory', 'Value']]
+        test_data = self.data[train_size:][['Inventory', 'Value']]
+        dataset_train = np.reshape(train_data, (-1, 2))  # reshape to get only numeric values
+        dataset_test = np.reshape(test_data, (-1, 2))
+        # here we can also add another columns if we will need to
 
-    def select_features(self,train_data,test_data):
-        train_data_f = train_data[['Inventory', 'Value']].values
-        train_data_f = np.reshape(train_data_f,(-1,2))
+        return dataset_train, dataset_test
 
-        return train_data_f
+    def data_normalization(self, train_data, test_data):
+        self.scaler = MinMaxScaler(feature_range=(0, 1))
+        scaled_train_f = self.scaler.fit_transform(train_data)
+        scaled_test_f = self.scaler.transform(test_data)
+
+        return scaled_train_f, scaled_test_f
+
+    def inverse_transform(self, scaled_data):
+        return self.scaler.inverse_transform(scaled_data)
 
 
 class LSTM(nn.Module):
@@ -88,13 +94,30 @@ class main:
 
     prepare_to_lstm = prepare_LSTM(data)
     train_data, test_data = prepare_to_lstm.split_data_and_seq()
-    print(train_data)
-    print(test_data)
 
+    print("before nor train")
+    print(train_data[:5])
+    print("before nor test")
+    print(test_data[:5])
 
+    final_train_data, final_test_data = prepare_to_lstm.data_normalization(train_data, test_data)
+
+    print("Normalized Train Data:")
+    print(final_train_data[:5])
+    print("Normalized Test Data:")
+    print(final_test_data[:5])
+
+    # Inverse transform
+    inv_train_data = prepare_to_lstm.inverse_transform(final_train_data)
+    inv_test_data = prepare_to_lstm.inverse_transform(final_test_data)
+
+    print("Inverse Transformed Train Data:")
+    print(inv_train_data[:5])
+    print("Inverse Transformed Test Data:")
+    print(inv_test_data[:5])
 
 
 
 
 if __name__ == "__main__":
-   main()
+    main()
