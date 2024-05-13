@@ -16,13 +16,10 @@ class prepare_LSTM:
 
     def split_data(self):
         train_size = int(len(self.data) * 0.8) + 3
-        train_data = self.data[:train_size][['code_p','Inventory', 'Value']]
-        test_data = self.data[train_size:][['code_p','Inventory', 'Value']]
+        train_data = self.data[:train_size][['Value']]
+        test_data = self.data[train_size:][['Value']]
         dataset_train = np.reshape(train_data, (-1, 3))  # reshape to get only numeric values
         dataset_test = np.reshape(test_data, (-1, 3))
-        print(dataset_test)
-        print("now")
-        print(dataset_train)
         # here we can also add another columns if we will need to
 
         return dataset_train, dataset_test
@@ -37,16 +34,23 @@ class prepare_LSTM:
     def inverse_transform(self, scaled_data):
         return self.scaler.inverse_transform(scaled_data)
 
-    def divide_to_seq(self,test):
-        x_text, y_test =[], []
+    def divide_to_seq(self, test, train):
+        x_test, y_test, x_train, y_train = [], [], [], []
         for i in range(len(test) - self.seq):
-            x_text.append(test[i:i+self.seq])
+            x_test.append(test[i:i+self.seq])
             y_test.append(test[i+1:i+self.seq+1])
-        x_test, y_test = np.array(x_text), np.array(y_test)
+        x_test, y_test = np.array(x_test), np.array(y_test)
         x_test = torch.tensor(x_test, dtype=torch.float32)
         y_test = torch.tensor(y_test, dtype=torch.float32)
 
-        return x_test, y_test
+        for i in range(len(train) - self.seq):
+            x_train.append(train[i:i+self.seq])
+            y_train.append(train[i+1:i+self.seq+1])
+        x_train, y_train = np.array(x_train), np.array(y_train)
+        x_train = torch.tensor(x_train, dtype=torch.float32)
+        y_train = torch.tensor(y_train, dtype=torch.float32)
+
+        return x_test, y_test, x_train, y_train
 
 
 
@@ -93,6 +97,7 @@ class ModelTrainer:
 
 class main:
     data = pd.read_csv("final_data_prediction.csv")
+    indices = list(range(len(data)))
 
     month_map_reverse = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6,
                          'July': 7, 'August': 8, 'September': 9, 'October': 10, 'Novermber': 11, 'December': 12}
@@ -110,16 +115,13 @@ class main:
     prepare_to_lstm = prepare_LSTM(data)
     train_data, test_data = prepare_to_lstm.split_data()
 
-    #final_train_data, final_test_data = prepare_to_lstm.data_normalization(train_data, test_data)
+    final_train_data, final_test_data = prepare_to_lstm.data_normalization(train_data, test_data)
 
     # Inverse to real values
     # inv_train_data = prepare_to_lstm.inverse_transform(final_train_data)
     # inv_test_data = prepare_to_lstm.inverse_transform(final_test_data)
 
-    #x_test, y_test = prepare_to_lstm.divide_to_seq(final_test_data)
-    #print(x_test)
-    #print(y_test)
-
+    x_test, y_test, x_train, y_train = prepare_to_lstm.divide_to_seq(final_test_data, final_train_data)
 
 
 
