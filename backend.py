@@ -5,8 +5,16 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
+import random
 # from sklearn.metrics import mean_squared_error
 # import matplotlib.pyplot as plt
+random_seed = 42
+random.seed(random_seed)
+np.random.seed(random_seed)
+torch.manual_seed(random_seed)
+torch.cuda.manual_seed_all(random_seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 
 
 class prepare_LSTM:
@@ -133,7 +141,7 @@ class Training:
                 print(
                     f'Epoch [{epoch + 1}/{num_epochs}] - Training Loss: {average_loss:.4f}, Test Loss: {average_test_loss:.4f}')
 
-            return self.train_hist, self.test_hist
+        return self.train_hist, self.test_hist
 
 
 
