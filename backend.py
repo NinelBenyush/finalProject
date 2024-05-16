@@ -7,7 +7,6 @@ from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 import random
 # from sklearn.metrics import mean_squared_error
-# import matplotlib.pyplot as plt
 random_seed = 42
 random.seed(random_seed)
 np.random.seed(random_seed)
@@ -231,7 +230,6 @@ class main:
     plt.plot(x, test_hist, label="Test loss")
     plt.legend()
     plt.show()
-
 
 
 

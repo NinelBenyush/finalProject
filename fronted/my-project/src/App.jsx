@@ -11,8 +11,7 @@ function App(){
     fetch('http://localhost:5000/')
       .then(response => response.json())
       .then(data => {
-        console.log('Data from Flask API:');
-        // You can also handle the data further, e.g., update state
+        console.log('Data from  API:' + data.message);
       })
       .catch(error => {
         console.error('Error:', error);

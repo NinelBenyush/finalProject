@@ -9,13 +9,13 @@ export const links = [
   { id: nanoid(), href: '#home', text: 'Home' },
   { id: nanoid(), href: '#start', text: 'Start' },
   { id: nanoid(), href: '#about', text: 'About' },
-  { id: nanoid(), href: '#login', text: 'Sign in/Log in' },
+  { id: nanoid(), href: '#login', text: 'Sign up/Log in' },
 ];
 
 export const start = [
   {
     id: nanoid(),
-    title: 'Log in/Sign in',
+    title: 'Log in/Sign Up',
     icon: <CiLogin className='h-16 w-16 text-emerald-500' />,
     text: 'First, you need to log in or sign in.',
   },
