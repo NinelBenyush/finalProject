@@ -13,8 +13,8 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS users (
 
 # Sample data for insertion
 data = [
-    ('user3', 'pas1'),
-    ('user4', 'pass2')
+    ('ninel', 'benyush'),
+    ('morin', 'lugasi')
 ]
 
 # Insert the data into the users table, handling duplicates

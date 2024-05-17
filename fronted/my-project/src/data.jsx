@@ -6,10 +6,10 @@ import { IoIosNotifications } from "react-icons/io";
 
 
 export const links = [
-  { id: nanoid(), href: '#home', text: 'Home' },
+  { id: nanoid(), href: '/home', text: 'Home' },
   { id: nanoid(), href: '#start', text: 'Start' },
   { id: nanoid(), href: '#about', text: 'About' },
-  { id: nanoid(), href: '#login', text: 'Sign up/Log in' },
+  { id: nanoid(), href: '/login', text: 'Sign up/Log in' },
 ];
 
 export const start = [

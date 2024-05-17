@@ -3,6 +3,7 @@ import Hero from "./components/Hero";
 import Start from "./components/Start";
 import About from "./components/About";
 import React, { useEffect } from 'react';
+import Login from "./components/Login";
 
 
 function App(){
@@ -25,6 +26,7 @@ function App(){
     <Hero />
     <Start/>
     <About />
+    <Login />
     </>
   )
 }
