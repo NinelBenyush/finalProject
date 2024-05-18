@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 import random
@@ -18,7 +18,7 @@ torch.backends.cudnn.benchmark = False
 
 class prepare_LSTM:
     def __init__(self, data):
-        self.seq =3
+        self.seq = 3
         self.data = data
         self.num_features = 1
         self.scaler = None
@@ -47,12 +47,12 @@ class prepare_LSTM:
         x_test, y_test, x_train, y_train = [], [], [], []
         for i in range(len(test) - self.seq):
             x_test.append(test[i:i+self.seq])
-        x_test= np.array(x_test)
+        x_test = np.array(x_test)
         x_test = torch.tensor(x_test, dtype=torch.float32)
 
         for i in range(len(train) - self.seq):
             x_train.append(train[i:i+self.seq])
-        x_train= np.array(x_train)
+        x_train = np.array(x_train)
         x_train = torch.tensor(x_train, dtype=torch.float32)
 
         for i in range(len(test) - self.seq):
@@ -64,7 +64,6 @@ class prepare_LSTM:
         y_train = torch.tensor(y_train, dtype=torch.float32)
 
         return x_test, y_test, x_train, y_train
-
 
 
 class LSTM(nn.Module):
@@ -138,11 +137,48 @@ class Training:
 
             if (epoch + 1) % 10 == 0:
                 print(
-                    f'Epoch [{epoch + 1}/{num_epochs}] - Training Loss: {average_loss:.4f}, Test Loss: {average_test_loss:.4f}')
+                    f'Epoch [{epoch + 1}/{num_epochs}] - Training Loss: {average_loss:.4f}, Test Loss:'
+                    f' {average_test_loss:.4f}')
 
         return self.train_hist, self.test_hist
 
+    def forecast(self, X_test, num_forecast_steps, test_data):
+        # Convert to NumPy and remove singleton dimensions
+        print(len(X_test))
+        sequence_to_plot = X_test.squeeze().cpu().numpy()
 
+        # Use the last sequence as the starting point
+        historical_data = sequence_to_plot[-1]
+
+        # Initialize a list to store the forecasted values
+        forecasted_values = []
+
+        # Use the trained model to forecast future values
+        with torch.no_grad():
+            for _ in range(num_forecast_steps):
+                # Prepare the historical_data tensor with the correct input size
+                historical_data_tensor = torch.as_tensor(historical_data).view(1, -1,
+                                                                               historical_data.shape[-1]).float().to(
+                    self.device)
+
+                # Use the model to predict the next value
+                predicted_value = self.model(historical_data_tensor).cpu().numpy()[0, -1]
+
+                # Append the predicted value to the forecasted_values list
+                forecasted_values.append(predicted_value)
+
+                # Update the historical_data sequence by removing the oldest value and adding the predicted value
+                historical_data = np.roll(historical_data, shift=-1, axis=0)
+                historical_data[-1] = predicted_value
+
+        # Generate future dates
+        last_date = test_data.index[-1]
+        future_dates = pd.date_range(start=last_date + pd.DateOffset(1), periods=num_forecast_steps)
+
+        # Concatenate the original index with the future dates
+        combined_index = test_data.index.append(future_dates)
+
+        return forecasted_values, combined_index
 
 class ModelTrainer:
     def __init__(self, model, criterion, optimizer, num_epochs):
@@ -231,7 +267,13 @@ class main:
     plt.legend()
     plt.show()
 
+    num_forecast_steps = 3
+    forecasted_values, combined_index = trainer.forecast(x_test, num_forecast_steps, data)
 
+    # Print forecasted values and dates
+    print(f"Forecasted values: {forecasted_values}")
+    print(len(forecasted_values))
+    print(f"Combined index: {combined_index}")
 
 
 if __name__ == "__main__":

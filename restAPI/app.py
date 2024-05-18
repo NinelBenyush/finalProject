@@ -23,10 +23,10 @@ def root():
 @app.route("/", methods=["POST"])
 def login():
     try:
-        data = request.get_json()  # Automatically handles the Content-Type check
+        data = request.get_json()  
         username = data['username']
         password = data['password']
-        print(f"{username} {password}")
+        app.logger.info(f"Username: {username}, Password: {password}")
         message = username
         return jsonify({"message": message})
     except Exception as e:
