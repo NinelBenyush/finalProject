@@ -38,7 +38,7 @@ class prepare_LSTM:
         scaled_train_f = self.scaler.fit_transform(train_data)
         scaled_test_f = self.scaler.transform(test_data)
 
-        return scaled_train_f, scaled_test_f
+        return scaled_train_f, scaled_test_f, self.scaler
 
     def inverse_transform(self, scaled_data):
         return self.scaler.inverse_transform(scaled_data)
@@ -142,43 +142,28 @@ class Training:
 
         return self.train_hist, self.test_hist
 
-    def forecast(self, X_test, num_forecast_steps, test_data):
-        # Convert to NumPy and remove singleton dimensions
-        print(len(X_test))
-        sequence_to_plot = X_test.squeeze().cpu().numpy()
+    def forecast(self, x_test):
+        # Initialize lists to store all predictions and actual values
+        all_forecasted_values = []
+        all_actual_values = []
 
-        # Use the last sequence as the starting point
-        historical_data = sequence_to_plot[-1]
-
-        # Initialize a list to store the forecasted values
-        forecasted_values = []
-
-        # Use the trained model to forecast future values
+        self.model.eval()
         with torch.no_grad():
-            for _ in range(num_forecast_steps):
-                # Prepare the historical_data tensor with the correct input size
-                historical_data_tensor = torch.as_tensor(historical_data).view(1, -1,
-                                                                               historical_data.shape[-1]).float().to(
-                    self.device)
+            for i in range(len(x_test)):
+                # Prepare the current test sequence
+                current_sequence = x_test[i:i + 1]
 
-                # Use the model to predict the next value
-                predicted_value = self.model(historical_data_tensor).cpu().numpy()[0, -1]
+                # Predict the next value using the model
+                predicted_value = self.model(current_sequence.to(self.device)).cpu().numpy()
 
-                # Append the predicted value to the forecasted_values list
-                forecasted_values.append(predicted_value)
+                # Store the predicted value
+                all_forecasted_values.append(predicted_value[0])
 
-                # Update the historical_data sequence by removing the oldest value and adding the predicted value
-                historical_data = np.roll(historical_data, shift=-1, axis=0)
-                historical_data[-1] = predicted_value
+                # Store the actual value for comparison
+                actual_value = x_test[i, -1, :]
+                all_actual_values.append(actual_value)
 
-        # Generate future dates
-        last_date = test_data.index[-1]
-        future_dates = pd.date_range(start=last_date + pd.DateOffset(1), periods=num_forecast_steps)
-
-        # Concatenate the original index with the future dates
-        combined_index = test_data.index.append(future_dates)
-
-        return forecasted_values, combined_index
+        return np.array(all_forecasted_values), np.array(all_actual_values)
 
 class ModelTrainer:
     def __init__(self, model, criterion, optimizer, num_epochs):
@@ -225,7 +210,7 @@ class main:
     prepare_to_lstm = prepare_LSTM(data)
     train_data, test_data = prepare_to_lstm.split_data()
 
-    final_train_data, final_test_data = prepare_to_lstm.data_normalization(train_data, test_data)
+    final_train_data, final_test_data, scaler = prepare_to_lstm.data_normalization(train_data, test_data)
 
     # Inverse to real values
     # inv_train_data = prepare_to_lstm.inverse_transform(final_train_data)
@@ -267,13 +252,31 @@ class main:
     plt.legend()
     plt.show()
 
-    num_forecast_steps = 3
-    forecasted_values, combined_index = trainer.forecast(x_test, num_forecast_steps, data)
+    forecasted_values, actual_values = trainer.forecast(x_test)
 
-    # Print forecasted values and dates
-    print(f"Forecasted values: {forecasted_values}")
-    print(len(forecasted_values))
-    print(f"Combined index: {combined_index}")
+    forecasted_values = prepare_to_lstm.inverse_transform(forecasted_values)
+    actual_values = prepare_to_lstm.inverse_transform(actual_values)
+
+    # Convert to for loops
+    aggregated_forecasted_values = []
+    for i in range(0, len(forecasted_values), 12):
+        aggregated_forecasted_values.append(sum(forecasted_values[i:i + 12]))
+
+    aggregated_actual_values = []
+    for i in range(0, len(actual_values), 12):
+        aggregated_actual_values.append(sum(actual_values[i:i + 12]))
+
+    inventory_values = data['Inventory'].values
+
+    # Plot the aggregated forecasted values and the actual inventory values
+    plt.figure(figsize=(10, 6))
+    plt.plot(aggregated_forecasted_values, label='Forecasted Values (Sum of 12 Steps)')
+    plt.plot(aggregated_actual_values, label='Actual Inventory')
+    plt.xlabel('Time Periods')
+    plt.ylabel('Inventory Values')
+    plt.title('Forecasted Inventory vs Actual Inventory')
+    plt.legend()
+    plt.show()
 
 
 if __name__ == "__main__":
