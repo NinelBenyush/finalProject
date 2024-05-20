@@ -8,12 +8,14 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   
   const sendLogin = () => {
+    setLoading(true);
     const data = { username, password };
     console.log('Sending login data:', data);  // Debug log
     axios.post('http://localhost:5000/', data)
       .then((res) => {
         console.log('Response:', res.data);  // Debug log
         setMessage(res.data.message);
+        setLoading(false);
       })
       .catch((err) => {
         console.error('Error:', err);  // Debug log
@@ -22,6 +24,7 @@ const Login = () => {
         } else {
           setMessage("An error occurred. Please try again.");
         }
+        setLoading(false);
       });
   };
 
@@ -79,10 +82,15 @@ const Login = () => {
         </div>
         <button
           onClick={() => sendLogin()}
-          className="bg-emerald-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-300"
+          className="bg-emerald-500 text-white py-2 px-4 rounded hover:bg-emerald-200 transition-colors duration-300"
         >
           Submit
         </button>
+        {loading && (  
+          <div className="mt-4 flex space-x-2">
+            <span className="loading loading-spinner text-success"></span>
+          </div>
+        )}
         {message && <p className="mt-4 text-green-500">{message}</p>}
       </div>
     </div>
