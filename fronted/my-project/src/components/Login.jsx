@@ -4,14 +4,25 @@ import axios from 'axios';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  
   const sendLogin = () => {
-    const data = {
-      username: username,
-      password: password,
-    };
-    console.log(data);
-    axios.post('http://localhost:5000/', data).then((res) => console.log(res));
+    const data = { username, password };
+    console.log('Sending login data:', data);  // Debug log
+    axios.post('http://localhost:5000/', data)
+      .then((res) => {
+        console.log('Response:', res.data);  // Debug log
+        setMessage(res.data.message);
+      })
+      .catch((err) => {
+        console.error('Error:', err);  // Debug log
+        if (err.response && err.response.status === 401) {
+          setMessage(err.response.data.message);
+        } else {
+          setMessage("An error occurred. Please try again.");
+        }
+      });
   };
 
   return (
@@ -72,6 +83,7 @@ const Login = () => {
         >
           Submit
         </button>
+        {message && <p className="mt-4 text-green-500">{message}</p>}
       </div>
     </div>
   );

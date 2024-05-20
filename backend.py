@@ -270,8 +270,8 @@ class main:
 
     # Plot the aggregated forecasted values and the actual inventory values
     plt.figure(figsize=(10, 6))
-    plt.plot(aggregated_forecasted_values, label='Forecasted Values (Sum of 12 Steps)')
-    plt.plot(aggregated_actual_values, label='Actual Inventory')
+    plt.plot(aggregated_actual_values, label='prediction Values (Sum of 12 Steps)')
+    plt.plot(inventory_values, label='Actual Inventory')
     plt.xlabel('Time Periods')
     plt.ylabel('Inventory Values')
     plt.title('Forecasted Inventory vs Actual Inventory')
