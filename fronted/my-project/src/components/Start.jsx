@@ -7,8 +7,8 @@ import axios from "axios";
 
 function Start(){
 
-   
 
+    
     return (
         <section className="py-20 align-element" id="start">
            <SectionTitle text='Lets Start' /> 
