@@ -4,6 +4,7 @@ import Start from "./components/Start";
 import About from "./components/About";
 import React, { useEffect } from 'react';
 import Login from "./components/Login";
+import InsertData from "./components/InsertData";
 
 
 function App(){
@@ -27,6 +28,7 @@ function App(){
     <Start/>
     <About />
     <Login />
+    <InsertData />
     </>
   )
 }

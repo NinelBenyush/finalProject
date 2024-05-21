@@ -27,7 +27,6 @@ export const start = [
     text: ( 
       <>
       Second, you need to input your inventory data
-      <input type="file" className="file-input file-input-bordered w-full max-w-xs" />
     </>
     ),
   
