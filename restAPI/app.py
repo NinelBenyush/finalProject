@@ -25,6 +25,10 @@ def create_tables():
 def root():
     return jsonify({"message": "test"})
 
+@app.route("/", methods = ['POST'])
+def uploadFile():
+
+
 @app.route("/", methods=["POST"])
 def login():
     try:

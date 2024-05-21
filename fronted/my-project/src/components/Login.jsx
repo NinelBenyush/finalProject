@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { CiLogin } from "react-icons/ci";
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -31,7 +32,9 @@ const Login = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-md shadow-md">
-        <h1 className="text-2xl font-bold mb-6">Login</h1>
+      <h1 className="text-2xl font-bold mb-6 flex items-center">
+               Login <CiLogin className="ml-2" />
+      </h1>
         <div className="mb-4">
           <label className="input input-bordered flex items-center gap-2">
             <svg
@@ -45,7 +48,7 @@ const Login = () => {
             <input
               type="text"
               placeholder="Username"
-              className="grow border-2 border-gray-300 rounded-md p-2 focus:border-blue-500"
+              className="grow border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
@@ -70,7 +73,7 @@ const Login = () => {
             </svg>
             <input
               type="password"
-              className="grow border-2 border-gray-300 rounded-md p-2 focus:border-blue-500"
+              className="grow border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
