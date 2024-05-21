@@ -10,6 +10,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Nina/Desktop/finalPr
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress a warning
 db = SQLAlchemy(app)
 CORS(app)
+UPLOAD_FOLDER = "./UPLOAD_FOLDER"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 class User(db.Model):
     __tablename__ = 'users'  # Ensure the table name matches
@@ -27,6 +29,20 @@ def root():
 
 @app.route("/", methods = ['POST'])
 def uploadFile():
+    if 'file' not in request.files:
+        return 'No file uploaded', 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return 'No file selected', 400
+
+    # Save the file to the upload directory
+    filename = file.filename
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(file_path)
+
+    return f'File {filename} uploaded successfully'
 
 
 @app.route("/", methods=["POST"])

@@ -1,19 +1,46 @@
 import img from "../assets/insertData2.jpg";
 import React, {useState} from "react";
+import axios from "axios";
+
 
 function InsertData(){
 
     const [fileName, setFileName] = useState('');
+    const [ file, setFile] = useState(null);
 
     const handleFile = (event) => {
         const file = event.target.files[0];
         if (file){
+            setFile(file)
             setFileName(file.name);
         }
         else {
             setFileName('');
         }
     }
+
+    const handleUpload = async () => {
+        if (!file) {
+          return;
+        }
+      
+        const formData = new FormData();
+        formData.append('file', file);
+      
+        try {
+          const response = await axios.post('http://localhost:5000/', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          console.log('File uploaded successfully:', response.data);
+          // Reset the file state after successful upload
+          setFile(null);
+          setFileName('');
+        } catch (error) {
+          console.error('Error uploading file:', error);
+        }
+      };
 
     return (
 <div className="flex justify-center items-center min-h-screen">
@@ -43,7 +70,7 @@ function InsertData(){
       <br></br>
       <p>Click the button down below to upload</p>
       <div className="card-actions justify-end">
-        <button className="btn bg-emerald-100">Upload</button>
+        <button className="btn bg-emerald-100" onClick={handleUpload}>Upload</button>
       </div>
     </div>
   </div>
