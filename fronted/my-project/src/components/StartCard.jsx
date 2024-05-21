@@ -1,18 +1,15 @@
+import React from 'react';
 
-function StartCard({icon,title,text}){
-    return (
-        <article>
-            <span>{icon}</span>
-            <h4 className="mt-6 font-bold">
-              {title}
-            </h4>
-            <p className="mt-2 text-slate-500">
-                {text}
-
-            </p>
-
-        </article>
-    )
+function StartCard({ title, icon, text }) {
+  return (
+    <div className="bg-white p-8 rounded-md shadow-md">
+      <div className="flex items-center gap-4 mb-4">
+        {icon}
+        <h3 className="text-xl font-semibold">{title}</h3>
+      </div>
+      <p>{text}</p>
+    </div>
+  );
 }
 
 export default StartCard;

@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import { LuFileSpreadsheet } from "react-icons/lu";
 import { CiLogin } from "react-icons/ci";
 import { IoIosNotifications } from "react-icons/io";
+import "./index.css";
 
 
 export const links = [
@@ -23,7 +24,14 @@ export const start = [
     id: nanoid(),
     title: 'Insert Data',
     icon: <LuFileSpreadsheet className='h-16 w-16 text-emerald-500' />,
-    text: 'Second, you need to input your inventory data.',
+    text: ( 
+      <>
+      Second, you need to input your inventory data
+      <input type="file" className="file-input file-input-bordered w-full max-w-xs" />
+    </>
+    ),
+  
+  
   },
   {
     id: nanoid(),
