@@ -27,52 +27,46 @@ def create_tables():
 def root():
     return jsonify({"message": "test"})
 
-@app.route("/", methods = ['POST'])
-def uploadFile():
-    if 'file' not in request.files:
-        return 'No file uploaded', 400
+@app.route("/", methods=['POST'])
+def handle_post():
+    if 'file' in request.files:
+        file = request.files['file']
 
-    file = request.files['file']
-
-    if file.filename == '':
-        return 'No file selected', 400
-
-    # Save the file to the upload directory
-    filename = file.filename
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(file_path)
-
-    return f'File {filename} uploaded successfully'
+        if file.filename == '':
+            return 'No file selected', 400
 
 
-@app.route("/", methods=["POST"])
-def login():
-    try:
-        data = request.get_json()
-        username = data['username'].strip()
-        password = data['password'].strip()
-        
-        # Debugging: Log the received data
-        app.logger.info(f"Received username: '{username}', password: '{password}'")
-        
-        # Fetch the user from the database
-        user = User.query.filter_by(username=username).first()
-        
-        # Debugging: Log the retrieved user
-        if user:
-            app.logger.info(f"Retrieved user: id={user.id}, username={user.username}, password={user.password}")
-        else:
-            app.logger.info(f"No user found with the provided username '{username}'")
-        
-        # Check if user exists and password matches
-        if user and user.password == password:
-            message = "Login successful"
-            return jsonify({"message": message})
-        else:
-            return jsonify({"message": "Invalid username or password"}), 401
-    except Exception as e:
-        app.logger.error(f"Error: {str(e)}")
-        return jsonify({"error": str(e)}), 400
+        filename = file.filename
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
 
+        return f'File {filename} uploaded successfully'
+
+    elif request.is_json:
+        # Handle login
+        try:
+            data = request.get_json()
+            username = data['username'].strip()
+            password = data['password'].strip()
+
+            app.logger.info(f"Received username: '{username}', password: '{password}'")
+
+            user = User.query.filter_by(username=username).first()
+
+            if user:
+                app.logger.info(f"Retrieved user: id={user.id}, username={user.username}, password={user.password}")
+            else:
+                app.logger.info(f"No user found with the provided username '{username}'")
+
+            if user and user.password == password:
+                message = "Login successful"
+                return jsonify({"message": message})
+            else:
+                return jsonify({"message": "Invalid username or password"}), 401
+        except Exception as e:
+            app.logger.error(f"Error: {str(e)}")
+            return jsonify({"error": str(e)}), 400
+
+    return 'Bad Request', 400
 if __name__ == '__main__':
     app.run(debug=True)
