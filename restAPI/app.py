@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
+from file_processor import work_on_file
 
 app = Flask(__name__)
 
@@ -39,6 +40,8 @@ def handle_post():
         filename = file.filename
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
+
+        work_on_file(file_path)
 
         return f'File {filename} uploaded successfully'
 
