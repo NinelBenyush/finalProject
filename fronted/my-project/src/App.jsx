@@ -5,6 +5,7 @@ import About from "./components/About";
 import React, { useEffect } from 'react';
 import Login from "./components/Login";
 import InsertData from "./components/InsertData";
+import Register from "./components/Register";
 
 
 function App(){
@@ -29,6 +30,7 @@ function App(){
     <About />
     <Login />
     <InsertData />
+    <Register />
     </>
   )
 }
