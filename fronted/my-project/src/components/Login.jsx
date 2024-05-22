@@ -31,12 +31,12 @@ const Login = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-md shadow-md">
-      <h1 className="text-2xl font-bold mb-6 flex items-center">
-               Login <CiLogin className="ml-2" />
-      </h1>
-        <div className="mb-4">
-          <label className="input input-bordered flex items-center gap-2">
+      <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-6 flex items-center justify-center">
+          Login <CiLogin className="ml-2" />
+        </h1>
+        <div className="mb-4 w-full">
+          <label className="flex items-center gap-2 w-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -48,17 +48,14 @@ const Login = () => {
             <input
               type="text"
               placeholder="Username"
-              className="grow border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
+              className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <label htmlFor="username" className="text-gray-500">
-              Username
-            </label>
           </label>
         </div>
-        <div className="mb-6">
-          <label className="input input-bordered flex items-center gap-2">
+        <div className="mb-6 w-full">
+          <label className="flex items-center gap-2 w-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -73,19 +70,16 @@ const Login = () => {
             </svg>
             <input
               type="password"
-              className="grow border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
               placeholder="Password"
+              className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <label htmlFor="password" className="text-gray-500">
-              Password
-            </label>
           </label>
         </div>
         <button
           onClick={() => sendLogin()}
-          className="bg-emerald-500 text-white py-2 px-4 rounded hover:bg-emerald-200 transition-colors duration-300"
+          className="bg-emerald-500 text-white py-2 px-4 rounded hover:bg-emerald-200 transition-colors duration-300 w-full"
         >
           Submit
         </button>
