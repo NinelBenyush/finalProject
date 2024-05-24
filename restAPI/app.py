@@ -21,6 +21,11 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(200),nullable=False)
 
+    def __init__(self, username, password, email):
+        self.username = username
+        self.password = password
+        self.email = email
+
 @app.before_first_request
 def create_tables():
     db.create_all()
@@ -39,9 +44,16 @@ def handle_register():
     user = User.query.filter_by(email=email).first()
     
     if user:
-        app.logger.info(f"account already exist on this email ={user.email}")
+        app.logger.info(f"Account already exists with this email: {user.email}")
+        return jsonify({"message": "Account already exists with this email"}), 409
     
-    return f'File {username} got registered successfully'
+    create_user(username, password, email)
+    return jsonify({"message": "User registered successfully"}), 201
+
+def create_user(username, password, email):
+    new_user = User(username,password,email)
+    db.session.add(new_user)
+    db.session.commit()
 
 
 @app.route("/", methods=['POST'])
