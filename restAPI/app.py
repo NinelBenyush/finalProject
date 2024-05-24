@@ -35,21 +35,6 @@ def root():
     return jsonify({"message": "test"})
 
 
-@app.route("/", methods=['POST'])
-def handle_register():
-    data = request.get_json()
-    username = data['username'].strip()
-    password = data['password'].strip()
-    email = data['email'].strip()
-    user = User.query.filter_by(email=email).first()
-    
-    if user:
-        app.logger.info(f"Account already exists with this email: {user.email}")
-        return jsonify({"message": "Account already exists with this email"}), 409
-    
-    create_user(username, password, email)
-    return jsonify({"message": "User registered successfully"}), 201
-
 def create_user(username, password, email):
     new_user = User(username,password,email)
     db.session.add(new_user)
@@ -59,11 +44,10 @@ def create_user(username, password, email):
 @app.route("/", methods=['POST'])
 def handle_post():
     if 'file' in request.files:
+        # Handle file upload
         file = request.files['file']
-
         if file.filename == '':
             return 'No file selected', 400
-
 
         filename = file.filename
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -72,32 +56,35 @@ def handle_post():
         work_on_file(file_path)
 
         return f'File {filename} uploaded successfully'
-
     elif request.is_json:
-        # Handle login
-        try:
-            data = request.get_json()
+        # Handle registration or login
+        data = request.get_json()
+        if 'username' in data and 'password' in data and 'email' in data:
+            # Register new user
             username = data['username'].strip()
             password = data['password'].strip()
-
-            app.logger.info(f"Received username: '{username}', password: '{password}'")
-
-            user = User.query.filter_by(username=username).first()
+            email = data['email'].strip()
+            user = User.query.filter_by(email=email).first()
 
             if user:
-                app.logger.info(f"Retrieved user: id={user.id}, username={user.username}, password={user.password}")
-            else:
-                app.logger.info(f"No user found with the provided username '{username}'")
+                app.logger.info(f"Account already exists with this email: {user.email}")
+                return jsonify({"message": "Account already exists with this email"}), 409
+            
+            create_user(username, password, email)
+            return jsonify({"message": "User registered successfully"}), 201
+        elif 'username' in data and 'password' in data:
+            # Login
+            username = data['username'].strip()
+            password = data['password'].strip()
+            user = User.query.filter_by(username=username).first()
 
             if user and user.password == password:
                 message = "Login successful"
                 return jsonify({"message": message})
             else:
                 return jsonify({"message": "Invalid username or password"}), 401
-        except Exception as e:
-            app.logger.error(f"Error: {str(e)}")
-            return jsonify({"error": str(e)}), 400
-
     return 'Bad Request', 400
+
+
 if __name__ == '__main__':
     app.run(debug=True)

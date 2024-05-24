@@ -11,7 +11,7 @@ cursor = conn.cursor()
 cursor.execute("SELECT * FROM users")
 rows = cursor.fetchall()
 for row in rows:
-    print(f"id: {row[0]}, username: '{row[1]}', password: '{row[2]}'")
+    print(f"id: {row[0]}, username: '{row[1]}', password: '{row[2]}', email: '{row[3]}'")
 
 # Close the connection
 conn.close()
