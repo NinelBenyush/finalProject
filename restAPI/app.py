@@ -19,6 +19,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    email = db.Column(db.String(200),nullable=False)
 
 @app.before_first_request
 def create_tables():
@@ -27,6 +28,21 @@ def create_tables():
 @app.route('/', methods=['GET'])
 def root():
     return jsonify({"message": "test"})
+
+
+@app.route("/", methods=['POST'])
+def handle_register():
+    data = request.get_json()
+    username = data['username'].strip()
+    password = data['password'].strip()
+    email = data['email'].strip()
+    user = User.query.filter_by(email=email).first()
+    
+    if user:
+        app.logger.info(f"account already exist on this email ={user.email}")
+    
+    return f'File {username} got registered successfully'
+
 
 @app.route("/", methods=['POST'])
 def handle_post():

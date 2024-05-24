@@ -1,4 +1,43 @@
+import { useState } from 'react';
+import axios from 'axios';
+
 function Register() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] =useState('');
+  const [ email, setEmail] = useState('');
+  const  [loading, setLoading] = useState(false);
+  const [ message, setMessage] = useState('');
+  
+  const sendRegister = () => {
+    if(password!== confirmPassword){
+      setMessage("passwords dont match")
+      return;
+    }
+    setLoading(true)
+    const data = {username, password, email};
+    console.log('Sending register data:', data); 
+
+    axios.post('http://localhost:5000/', data)
+    .then((res) => {
+      console.log('reponse', res.data);
+      setMessage(res.data.message);
+      setLoading(false);
+    })
+    .cacth((err) => {
+      console.log("error",err);
+      if(err.response && err.response.status===400){
+        setMessage(err.response.data.message);
+      }
+      else {
+        setMessage("An error occurred. Please try again.");
+      }
+      setLoading(false);
+    })
+
+  }
+
+
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
         <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
@@ -20,6 +59,8 @@ function Register() {
                 type="text"
                 placeholder="Email"
                 className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
+                value = {email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </label>
           </div>
@@ -38,6 +79,8 @@ function Register() {
                 type="text"
                 placeholder="Username"
                 className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
+                value = {username}
+                onChange = {(e) => setUsername(e.target.value)}
               />
             </label>
           </div>
@@ -60,6 +103,8 @@ function Register() {
                 type="password"
                 placeholder="Password"
                 className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
+                value = {password}
+                onChange= {(e) => setPassword(e.target.value)}
               />
             </label>
           </div>
@@ -82,15 +127,25 @@ function Register() {
                 type="password"
                 placeholder="enter password again"
                 className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
+                value = {confirmPassword}
+                onChange = {(e) => setConfirmPassword(e.target.value)}
               />
+
             </label>
           </div>
 
           <button
+          onClick = {() => sendRegister()}
             className="bg-emerald-500 text-white py-2 px-4 rounded hover:bg-emerald-200 transition-colors duration-300 w-full"
           >
             Submit
           </button>
+          {loading && (  
+          <div className="mt-4 flex space-x-2">
+            <span className="loading loading-spinner text-success"></span>
+          </div>
+        )}
+        {message && <p className="mt-4 text-green-500">{message}</p>}
         </div>
       </div>
     );
