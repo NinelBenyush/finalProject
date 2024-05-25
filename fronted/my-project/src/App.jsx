@@ -6,9 +6,11 @@ import React, { useEffect } from 'react';
 import Login from "./components/Login";
 import InsertData from "./components/InsertData";
 import Register from "./components/Register";
+import Footer from "./components/Footer";
 
 
 function App(){
+  
 
   useEffect(() => {
     fetch('http://localhost:5000/')
@@ -24,13 +26,14 @@ function App(){
 
   return (
     <>
-    <Navbar />
+    <Navbar  />
     <Hero />
     <Start/>
     <About />
     <Login />
     <InsertData />
     <Register />
+    <Footer />
     </>
   )
 }

@@ -1,8 +1,9 @@
 import {links} from "../data";
+import React from 'react';
+
 
 
 function Navbar(){
-
 
     return (
         
