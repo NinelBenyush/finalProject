@@ -11,5 +11,6 @@ export default {
     require('@tailwindcss/forms'),
     require('daisyui'),
     require("@tailwindcss/typography"),
+    require('@tailwindcss/forms'),
   ],
 }

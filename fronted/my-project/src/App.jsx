@@ -7,7 +7,7 @@ import Login from "./components/Login";
 import InsertData from "./components/InsertData";
 import Register from "./components/Register";
 import Footer from "./components/Footer";
-
+import DetailsAccount from "./components/DetailsAccount";
 
 function App(){
   
@@ -33,6 +33,7 @@ function App(){
     <Login />
     <InsertData />
     <Register />
+    <DetailsAccount />
     <Footer />
     </>
   )
