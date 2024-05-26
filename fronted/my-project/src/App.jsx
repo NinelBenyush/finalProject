@@ -9,6 +9,7 @@ import Register from "./components/Register";
 import Footer from "./components/Footer";
 import DetailsAccount from "./components/DetailsAccount";
 import DownloadResult from "./components/DownloadResult";
+import Profile from "./components/Profile";
 
 function App(){
   
@@ -36,6 +37,7 @@ function App(){
     <Register />
     <DetailsAccount />
     <DownloadResult />
+    <Profile />
     <Footer />
     </>
   )
