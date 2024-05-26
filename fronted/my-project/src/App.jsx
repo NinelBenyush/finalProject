@@ -8,6 +8,7 @@ import InsertData from "./components/InsertData";
 import Register from "./components/Register";
 import Footer from "./components/Footer";
 import DetailsAccount from "./components/DetailsAccount";
+import DownloadResult from "./components/DownloadResult";
 
 function App(){
   
@@ -34,6 +35,7 @@ function App(){
     <InsertData />
     <Register />
     <DetailsAccount />
+    <DownloadResult />
     <Footer />
     </>
   )

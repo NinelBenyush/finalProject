@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
@@ -6,6 +6,7 @@ from file_processor import work_on_file
 from flask_mail import Mail, Message
 
 app = Flask(__name__)
+CORS(app)
 
 #app.config['MAIL_SERVER']= 'live.smtp.mailtrap.io'
 #app.config['MAIL_PORT'] = 587
@@ -20,7 +21,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/new_users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress a warning
 db = SQLAlchemy(app)
-CORS(app)
 UPLOAD_FOLDER = "./UPLOAD_FOLDER"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -50,6 +50,19 @@ def create_tables():
     #message.body = "Hey, welcome to the email notifications, we will send you here all the details"
     #mail.send(message)
     #return "Message sent!"
+
+@app.route('/',methods=['GET'])
+def download_file():
+    try:
+        file_path = os.path.join(app.root_path, 'files', 'C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/DataForPrediction/data2.csv')
+        if not os.path.isfile(file_path):
+            app.logger.error(f"File not found: {file_path}")
+            return f"File not found: {file_path}", 404
+        return send_file(file_path, as_attachment=True)
+    except Exception as e:
+        app.logger.error(f"Error sending file: {e}")
+        return str(e), 500
+    
 
 @app.route('/', methods=['GET'])
 def root():
