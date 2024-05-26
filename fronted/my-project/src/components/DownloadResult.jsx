@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { FaFileDownload } from "react-icons/fa";
 
 const FileDownload = () => {
     const [message, setMessage] = useState('');
@@ -31,7 +32,7 @@ const FileDownload = () => {
        <div className="hero min-h-screen bg-base-200">
         <div className="hero-content text-center">
         <div className="max-w-md">
-         <h1 className="text-5xl font-bold">Here are your predictions</h1>
+         <h1 className="text-5xl font-bold">Here are your predictions <FaFileDownload className="inline-block text-4xl" /></h1>
          <p className="py-6"> We have processed your data and generated the prediction results <br></br>Please go ahead and click on the download button</p>
          <button onClick={downloadFile} className="btn bg-emerald-400">Download</button>
          {message && <p>{message}</p>}
