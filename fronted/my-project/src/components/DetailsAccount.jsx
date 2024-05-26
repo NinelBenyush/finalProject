@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Switch } from '@headlessui/react';
+import { IoIosInformationCircleOutline } from "react-icons/io";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -22,7 +23,7 @@ function DetailsAccount() {
         />
       </div>
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Basic Information</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Basic Information <IoIosInformationCircleOutline className='inline-block text-4xl' /></h2>
         <p className="mt-2 text-lg leading-8 text-gray-600">
         Update your account information below
         </p>
