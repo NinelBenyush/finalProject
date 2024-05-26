@@ -3,8 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
 from file_processor import work_on_file
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
+
+#app.config['MAIL_SERVER']= 'live.smtp.mailtrap.io'
+#app.config['MAIL_PORT'] = 587
+#app.config['MAIL_USERNAME'] = 'api'
+#app.config['MAIL_PASSWORD'] = '06a770732fb9caaaa48f3c7ac08c3031'
+#app.config['MAIL_USE_TLS'] = True
+#app.config['MAIL_USE_SSL'] = False
+
+#mail = Mail(app)
 
 # Use the correct absolute path to the new database file
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/new_users.db'
@@ -29,6 +39,17 @@ class User(db.Model):
 @app.before_first_request
 def create_tables():
     db.create_all()
+
+#@app.route("/")
+#def index():
+ #   message = Message(
+  #      subject='Thank you for allowing notifications',
+   #     recipients=['ninelbenush@gmail.com'],
+    #    sender='hi@demomailtrap.com'
+    #)
+    #message.body = "Hey, welcome to the email notifications, we will send you here all the details"
+    #mail.send(message)
+    #return "Message sent!"
 
 @app.route('/', methods=['GET'])
 def root():
