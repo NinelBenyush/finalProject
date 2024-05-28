@@ -26,6 +26,9 @@ scaler = MinMaxScaler()
 final_data['Value'] = scaler.fit_transform(final_data[['Value']])
 final_data['Inventory'] = scaler.fit_transform(final_data[['Inventory']])
 
+train_size = int(len(final_data) * 0.8)
+train_data = final_data[:train_size]
+test_data = final_data[train_size:]
 # Function to create sequences
 def create_sequences(data, seq_length):
     xs, ys = [], []
@@ -77,58 +80,6 @@ y_test = torch.FloatTensor(y_test)
 print("X_train shape:", X_train.shape)  # Expected shape: [number_of_sequences, sequence_length, 1]
 print("y_train shape:", y_train.shape)  # Expected shape: [number_of_sequences, 1]
 
-
-"""
-# Print shapes
-print("Train shape:", X_train.shape, y_train.shape)
-print("Test shape:", X_test.shape, y_test.shape)
-
-# Function to print sample sequences
-def print_samples(X, y, num_samples=5):
-    for i in range(num_samples):
-        print(f"Sample {i+1}:")
-        print("X:", X[i].numpy().flatten())
-        print("y:", y[i].numpy().flatten())
-        print()
-
-print("Training Samples:")
-print_samples(X_train, y_train)
-
-print("Testing Samples:")
-print_samples(X_test, y_test)
-
-# Function to check alignment
-def check_alignment(X, y):
-    for i in range(len(X)):
-        if not np.array_equal(X[i, 1:, 0], y[i, :-1]):
-            print(f"Misalignment at sample {i}: X_last = {X[i, -1, 0]}, y = {y[i]}")
-            return
-    print("All sequences are correctly aligned.")
-
-print("Checking Training Data Alignment:")
-check_alignment(X_train, y_train)
-
-print("Checking Testing Data Alignment:")
-check_alignment(X_test, y_test)
-
-# Function to plot sequences
-def plot_sequences(X, y, num_samples=5):
-    for i in range(num_samples):
-        plt.figure(figsize=(10, 2))
-        plt.plot(range(len(X[i])), X[i].numpy().flatten(), label='X')
-        plt.plot(range(1, len(y[i])+1), y[i].numpy(), label='y', linestyle='--')
-        plt.title(f"Sample {i+1}")
-        plt.xlabel("Time Step")
-        plt.ylabel("Value")
-        plt.legend()
-        plt.show()
-
-print("Visualizing Training Data:")
-plot_sequences(X_train, y_train)
-
-print("Visualizing Testing Data:")
-plot_sequences(X_test, y_test)
-"""
 def create_lstm_model(input_size, hidden_size, num_layers):
     class LSTMModel(nn.Module):
         def __init__(self, input_size, hidden_size, num_layers):
@@ -210,3 +161,55 @@ def train_lstm_model(model, train_loader, test_loader, num_epochs, optimizer, lo
 num_epochs = 50
 train_hist, test_hist = train_lstm_model(model, train_loader, test_loader, num_epochs, optimizer, loss_fn, device)
 
+x = np.linspace(1,num_epochs,num_epochs)
+plt.plot(x,train_hist,scalex=True, label="Training loss")
+plt.plot(x, test_hist, label="Test loss")
+plt.legend()
+plt.show()
+
+def forecast_future_values(model, X_test, test_data, device, num_forecast_steps):
+    # Initialize lists to store all forecasted values
+    all_forecasted_values = []
+
+    model.eval()
+    with torch.no_grad():
+        # Use the last data points as the starting point for each product
+        for code_p, group in final_data.groupby('code_p'):
+            group_values = group['Value'].values
+            historical_data = torch.FloatTensor(group_values[-sequence_length:]).view(1, -1, 1).to(device)
+
+            forecasted_values = []
+            for _ in range(num_forecast_steps):
+                predicted_value = model(historical_data).cpu().numpy()[0, 0]
+                forecasted_values.append(predicted_value)
+                
+                # Update the historical_data sequence by removing the oldest value and adding the predicted value
+                historical_data = torch.cat((historical_data[:, 1:, :], torch.tensor([[[predicted_value]]]).to(device)), dim=1)
+            
+            all_forecasted_values.append(forecasted_values)
+
+    return np.array(all_forecasted_values)
+
+forecasted_values = forecast_future_values(model, X_test, test_data, device, num_forecast_steps=12)
+
+print(forecasted_values)
+print(f"Number of predictions: {forecasted_values.shape}")
+
+# Generate future dates
+last_date = test_data.index[-1]
+future_dates = pd.date_range(start=last_date + pd.DateOffset(1), periods=12)
+
+# Create DataFrame to store predictions
+predictions_df = pd.DataFrame(forecasted_values.T, index=future_dates, columns=[f'Product_{i}' for i in range(forecasted_values.shape[0])])
+
+print(predictions_df)
+
+# Plot predictions
+plt.figure(figsize=(10, 6))
+for product in predictions_df.columns:
+    plt.plot(predictions_df.index, predictions_df[product], label=product)
+plt.xlabel('Date')
+plt.ylabel('Predicted Value')
+plt.title('12-Month Predictions for Each Product')
+plt.legend()
+plt.show()
