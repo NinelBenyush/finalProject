@@ -1,10 +1,12 @@
 import React from "react";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdAccountCircle } from "react-icons/md";
+import SectionTitle from "./SectionTitle";
 
 function Profile() {
   return (
-    <div>
+    <section className="bg-white py-20 ">
+      <div className="align-element grid md:grid-cols-2 items-center gap-16">
 <ul className="menu menu-horizontal bg-base-200 rounded-box mt-6">
   <li>
     <a className="tooltip" data-tip="Account">
@@ -22,7 +24,8 @@ function Profile() {
     </a>
   </li>
 </ul>
-    </div>
+ </div>
+    </section>
   );
 }
 

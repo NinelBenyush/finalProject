@@ -143,25 +143,25 @@ class Training:
         return self.train_hist, self.test_hist
 
     def forecast(self, x_test):
-        # Initialize lists to store all predictions and actual values
+    # Initialize lists to store all predictions and actual values
         all_forecasted_values = []
         all_actual_values = []
 
         self.model.eval()
         with torch.no_grad():
-            for i in range(len(x_test)):
-                # Prepare the current test sequence
-                current_sequence = x_test[i:i + 1]
+           for i in range(len(x_test)):
+            # Prepare the current test sequence
+               current_sequence = x_test[i:i + 1]
 
-                # Predict the next value using the model
-                predicted_value = self.model(current_sequence.to(self.device)).cpu().numpy()
+            # Predict the next value using the model
+               predicted_value = self.model(current_sequence.to(self.device)).cpu().numpy()
 
-                # Store the predicted value
-                all_forecasted_values.append(predicted_value[0])
+            # Store the predicted value
+               all_forecasted_values.append(predicted_value[0])
 
-                # Store the actual value for comparison
-                actual_value = x_test[i, -1, :]
-                all_actual_values.append(actual_value)
+            # Store the actual value for comparison
+               actual_value = x_test[i, -1, :].cpu().numpy()
+               all_actual_values.append(actual_value)
 
         return np.array(all_forecasted_values), np.array(all_actual_values)
 
