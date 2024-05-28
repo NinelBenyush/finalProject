@@ -170,11 +170,13 @@ plt.show()
 def forecast_future_values(model, X_test, test_data, device, num_forecast_steps):
     # Initialize lists to store all forecasted values
     all_forecasted_values = []
+    code_p_values = []
 
     model.eval()
     with torch.no_grad():
         # Use the last data points as the starting point for each product
         for code_p, group in final_data.groupby('code_p'):
+            code_p_values.append(code_p)  # Store code_p for labeling
             group_values = group['Value'].values
             historical_data = torch.FloatTensor(group_values[-sequence_length:]).view(1, -1, 1).to(device)
 
@@ -188,9 +190,9 @@ def forecast_future_values(model, X_test, test_data, device, num_forecast_steps)
             
             all_forecasted_values.append(forecasted_values)
 
-    return np.array(all_forecasted_values)
+    return np.array(all_forecasted_values), code_p_values
 
-forecasted_values = forecast_future_values(model, X_test, test_data, device, num_forecast_steps=12)
+forecasted_values, code_p_values = forecast_future_values(model, X_test, test_data, device, num_forecast_steps=12)
 
 print(forecasted_values)
 print(f"Number of predictions: {forecasted_values.shape}")
@@ -199,15 +201,16 @@ print(f"Number of predictions: {forecasted_values.shape}")
 last_date = test_data.index[-1]
 future_dates = pd.date_range(start=last_date + pd.DateOffset(1), periods=12)
 
-# Create DataFrame to store predictions
-predictions_df = pd.DataFrame(forecasted_values.T, index=future_dates, columns=[f'Product_{i}' for i in range(forecasted_values.shape[0])])
+# Create DataFrame to store predictions with code_p as labels
+predictions_df = pd.DataFrame(forecasted_values.T, index=future_dates, columns=code_p_values)
 
 print(predictions_df)
+graph = predictions_df.iloc[:, :3]
 
 # Plot predictions
 plt.figure(figsize=(10, 6))
-for product in predictions_df.columns:
-    plt.plot(predictions_df.index, predictions_df[product], label=product)
+for code_p in graph.columns:
+    plt.plot(graph.index, graph[code_p], label=code_p)
 plt.xlabel('Date')
 plt.ylabel('Predicted Value')
 plt.title('12-Month Predictions for Each Product')
