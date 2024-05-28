@@ -31,10 +31,10 @@ def create_sequences(data, seq_length):
     xs, ys = [], []
     for i in range(len(data) - seq_length):
         x = data[i:i + seq_length]
-        y = data[i + 1:i + seq_length + 1]
+        y = data[i + seq_length]
         xs.append(x)
         ys.append(y)
-    return np.array(xs), np.array(ys)
+    return np.array(xs), np.array(ys).reshape(-1, 1)  # Reshape ys to have the correct shape
 
 # Parameters
 sequence_length = 3
@@ -72,6 +72,11 @@ X_train = torch.FloatTensor(X_train).unsqueeze(2)  # Add a dimension for feature
 y_train = torch.FloatTensor(y_train)
 X_test = torch.FloatTensor(X_test).unsqueeze(2)  # Add a dimension for features
 y_test = torch.FloatTensor(y_test)
+
+# Debugging shapes
+print("X_train shape:", X_train.shape)  # Expected shape: [number_of_sequences, sequence_length, 1]
+print("y_train shape:", y_train.shape)  # Expected shape: [number_of_sequences, 1]
+
 
 """
 # Print shapes
