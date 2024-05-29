@@ -229,6 +229,7 @@ plt.show()
 
 inverse_transformed_values = scaler.inverse_transform(predictions_df)
 inverse_transformed_df = pd.DataFrame(inverse_transformed_values, index=future_dates, columns=code_p_values)
+
 print(inverse_transformed_df)
 
 normalized_graph = inverse_transformed_df.iloc[:, :3]
