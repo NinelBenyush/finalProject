@@ -1,3 +1,4 @@
+import random
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
@@ -6,10 +7,18 @@ import matplotlib.pyplot as plt
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-# Read data
+random_seed = 42
+random.seed(random_seed)
+np.random.seed(random_seed)
+torch.manual_seed(random_seed)
+torch.cuda.manual_seed_all(random_seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+
+
 data = pd.read_csv("final_data_prediction.csv")
 
-# Map months to numbers and create Date column
+
 month_map_reverse = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6,
                      'July': 7, 'August': 8, 'September': 9, 'October': 10, 'Novermber': 11, 'December': 12}
 data['Month'] = data['Month'].map(month_map_reverse)
@@ -18,10 +27,9 @@ data['Date'] = pd.to_datetime(data['Month'].astype(str) + ' ' + data['Year'].ast
 data.set_index('Date', inplace=True)
 data.drop(columns=['Unnamed: 0'], inplace=True)
 
-# Select relevant columns
+
 final_data = data[["Inventory", "Value", "code_p"]]
 
-# Normalize data
 scaler = MinMaxScaler()
 final_data['Value'] = scaler.fit_transform(final_data[['Value']])
 final_data['Inventory'] = scaler.fit_transform(final_data[['Inventory']])
@@ -29,7 +37,7 @@ final_data['Inventory'] = scaler.fit_transform(final_data[['Inventory']])
 train_size = int(len(final_data) * 0.8)
 train_data = final_data[:train_size]
 test_data = final_data[train_size:]
-# Function to create sequences
+
 def create_sequences(data, seq_length):
     xs, ys = [], []
     for i in range(len(data) - seq_length):
@@ -37,12 +45,11 @@ def create_sequences(data, seq_length):
         y = data[i + seq_length]
         xs.append(x)
         ys.append(y)
-    return np.array(xs), np.array(ys).reshape(-1, 1)  # Reshape ys to have the correct shape
+    return np.array(xs), np.array(ys).reshape(-1, 1)  
 
-# Parameters
+
 sequence_length = 3
 
-# Initialize lists for train and test data
 X_train, y_train, X_test, y_test = [], [], [], []
 
 # Split data and create sequences for each product
@@ -59,26 +66,26 @@ for code_p, group in final_data.groupby('code_p'):
     y_train.append(y_tr)
     
     # Testing data
-    group_test = group_values[train_size - sequence_length:]  # include overlap
+    group_test = group_values[train_size - sequence_length:]  
     X_te, y_te = create_sequences(group_test, sequence_length)
     X_test.append(X_te)
     y_test.append(y_te)
 
-# Concatenate all data
+
 X_train = np.concatenate(X_train)
 y_train = np.concatenate(y_train)
 X_test = np.concatenate(X_test)
 y_test = np.concatenate(y_test)
 
 # Convert to tensors
-X_train = torch.FloatTensor(X_train).unsqueeze(2)  # Add a dimension for features
+X_train = torch.FloatTensor(X_train).unsqueeze(2) 
 y_train = torch.FloatTensor(y_train)
-X_test = torch.FloatTensor(X_test).unsqueeze(2)  # Add a dimension for features
+X_test = torch.FloatTensor(X_test).unsqueeze(2)  
 y_test = torch.FloatTensor(y_test)
 
-# Debugging shapes
-print("X_train shape:", X_train.shape)  # Expected shape: [number_of_sequences, sequence_length, 1]
-print("y_train shape:", y_train.shape)  # Expected shape: [number_of_sequences, 1]
+# Debugging 
+print("X_train shape:", X_train.shape) 
+print("y_train shape:", y_train.shape)  
 
 def create_lstm_model(input_size, hidden_size, num_layers):
     class LSTMModel(nn.Module):
@@ -199,7 +206,10 @@ print(f"Number of predictions: {forecasted_values.shape}")
 
 # Generate future dates
 last_date = test_data.index[-1]
-future_dates = pd.date_range(start=last_date + pd.DateOffset(1), periods=12)
+future_dates = []
+for i in range(12):
+    start_date = last_date.replace(day=1, month=last_date.month+i+1 if last_date.month+i+1 <= 12 else last_date.month+i+1-12)
+    future_dates.append(start_date)
 
 # Create DataFrame to store predictions with code_p as labels
 predictions_df = pd.DataFrame(forecasted_values.T, index=future_dates, columns=code_p_values)
@@ -211,6 +221,22 @@ graph = predictions_df.iloc[:, :3]
 plt.figure(figsize=(10, 6))
 for code_p in graph.columns:
     plt.plot(graph.index, graph[code_p], label=code_p)
+plt.xlabel('Date')
+plt.ylabel('Predicted Value')
+plt.title('12-Month Predictions for Each Product')
+plt.legend()
+plt.show()
+
+inverse_transformed_values = scaler.inverse_transform(predictions_df)
+inverse_transformed_df = pd.DataFrame(inverse_transformed_values, index=future_dates, columns=code_p_values)
+print(inverse_transformed_df)
+
+normalized_graph = inverse_transformed_df.iloc[:, :3]
+
+# Plot predictions
+plt.figure(figsize=(10, 6))
+for code_p in normalized_graph.columns:
+    plt.plot(normalized_graph.index, normalized_graph[code_p], label=code_p)
 plt.xlabel('Date')
 plt.ylabel('Predicted Value')
 plt.title('12-Month Predictions for Each Product')
