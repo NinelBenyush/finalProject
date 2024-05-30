@@ -6,6 +6,7 @@ import torch
 import matplotlib.pyplot as plt
 import torch.nn as nn
 from torch.utils.data import DataLoader
+import matplotlib.dates as mdates
 
 random_seed = 42
 random.seed(random_seed)
@@ -249,14 +250,37 @@ inverse_transformed_values = scaler.inverse_transform(predictions_df)
 inverse_transformed_df = pd.DataFrame(inverse_transformed_values, index=future_dates, columns=code_p_values)
 print(inverse_transformed_df)
 
-#normalized_graph = inverse_transformed_df.iloc[:, :3]
+inverse_transformed_df = inverse_transformed_df.apply(lambda x: x.astype(int))
+print(inverse_transformed_df)
+
+
+normalized_graph = inverse_transformed_df.iloc[:, :3]
+
+
 
 # Plot predictions
-#plt.figure(figsize=(10, 6))
-#for code_p in normalized_graph.columns:
-#    plt.plot(normalized_graph.index, normalized_graph[code_p], label=code_p)
-#plt.xlabel('Date')
-#plt.ylabel('Predicted Value')
-#plt.title('12-Month Predictions for Each Product')
-#plt.legend()
-#plt.show()
+plt.figure(figsize=(10, 6))
+for code_p in normalized_graph.columns:
+    plt.scatter(normalized_graph.index, normalized_graph[code_p], label=code_p)
+plt.xlabel('Date')
+plt.ylabel('Predicted Value')
+plt.title('12-Month Predictions for Each Product')
+plt.legend()
+plt.show()
+
+plt.figure(figsize=(10, 6))
+for code_p in normalized_graph.columns:
+    plt.scatter(normalized_graph.index, normalized_graph[code_p], label=code_p)
+
+# Ensure all 12 months are shown on the x-axis
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+
+# Rotate the dates to be vertical
+plt.xticks(rotation=90)
+
+plt.xlabel('Date')
+plt.ylabel('Predicted Value')
+plt.title('12-Month Predictions for Each Product')
+plt.legend()
+plt.show()
