@@ -30,6 +30,11 @@ data.drop(columns=['Unnamed: 0'], inplace=True)
 
 final_data = data[["Inventory", "Value", "code_p"]]
 
+
+
+final_data['Value'] = final_data['Value']
+final_data['Inventory'] = final_data['Inventory'] 
+
 scaler = MinMaxScaler()
 final_data['Value'] = scaler.fit_transform(final_data[['Value']])
 final_data['Inventory'] = scaler.fit_transform(final_data[['Inventory']])
@@ -84,8 +89,12 @@ X_test = torch.FloatTensor(X_test).unsqueeze(2)
 y_test = torch.FloatTensor(y_test)
 
 # Debugging 
-print("X_train shape:", X_train.shape) 
-print("y_train shape:", y_train.shape)  
+#print("X_train shape:", X_train.shape) 
+#print("y_train shape:", y_train.shape)  
+#print("X_train:", X_train) 
+#print("ytrain:", y_train) 
+#print("X_test", X_test) 
+#print("y_test", y_test)
 
 def create_lstm_model(input_size, hidden_size, num_layers):
     class LSTMModel(nn.Module):
@@ -93,10 +102,14 @@ def create_lstm_model(input_size, hidden_size, num_layers):
             super(LSTMModel, self).__init__()
             self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
             self.linear = nn.Linear(hidden_size, 1)
+            self.softplus = nn.Softplus()
 
         def forward(self, x):
-            out, _ = self.lstm(x)
+            hidden = torch.zeros(num_layers, x.size(0), hidden_size)
+            cell = torch.zeros(num_layers, x.size(0), hidden_size)
+            out, _ = self.lstm(x,(hidden,cell))
             out = self.linear(out[:, -1, :])
+            out = self.softplus(out)
             return out
 
     return LSTMModel(input_size, hidden_size, num_layers)
@@ -118,6 +131,7 @@ train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size,
 
 test_dataset = torch.utils.data.TensorDataset(X_test, y_test)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
 
 def train_lstm_model(model, train_loader, test_loader, num_epochs, optimizer, loss_fn, device):
     train_hist = []
@@ -168,6 +182,7 @@ def train_lstm_model(model, train_loader, test_loader, num_epochs, optimizer, lo
 num_epochs = 50
 train_hist, test_hist = train_lstm_model(model, train_loader, test_loader, num_epochs, optimizer, loss_fn, device)
 
+
 x = np.linspace(1,num_epochs,num_epochs)
 plt.plot(x,train_hist,scalex=True, label="Training loss")
 plt.plot(x, test_hist, label="Test loss")
@@ -175,7 +190,6 @@ plt.legend()
 plt.show()
 
 def forecast_future_values(model, X_test, test_data, device, num_forecast_steps):
-    # Initialize lists to store all forecasted values
     all_forecasted_values = []
     code_p_values = []
 
@@ -199,7 +213,10 @@ def forecast_future_values(model, X_test, test_data, device, num_forecast_steps)
 
     return np.array(all_forecasted_values), code_p_values
 
+
 forecasted_values, code_p_values = forecast_future_values(model, X_test, test_data, device, num_forecast_steps=12)
+print("forcasted values",forecasted_values)
+
 
 print(forecasted_values)
 print(f"Number of predictions: {forecasted_values.shape}")
@@ -227,19 +244,19 @@ plt.title('12-Month Predictions for Each Product')
 plt.legend()
 plt.show()
 
+#constant_added_predictions = predictions_df 
 inverse_transformed_values = scaler.inverse_transform(predictions_df)
 inverse_transformed_df = pd.DataFrame(inverse_transformed_values, index=future_dates, columns=code_p_values)
-
 print(inverse_transformed_df)
 
-normalized_graph = inverse_transformed_df.iloc[:, :3]
+#normalized_graph = inverse_transformed_df.iloc[:, :3]
 
 # Plot predictions
-plt.figure(figsize=(10, 6))
-for code_p in normalized_graph.columns:
-    plt.plot(normalized_graph.index, normalized_graph[code_p], label=code_p)
-plt.xlabel('Date')
-plt.ylabel('Predicted Value')
-plt.title('12-Month Predictions for Each Product')
-plt.legend()
-plt.show()
+#plt.figure(figsize=(10, 6))
+#for code_p in normalized_graph.columns:
+#    plt.plot(normalized_graph.index, normalized_graph[code_p], label=code_p)
+#plt.xlabel('Date')
+#plt.ylabel('Predicted Value')
+#plt.title('12-Month Predictions for Each Product')
+#plt.legend()
+#plt.show()
