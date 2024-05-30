@@ -118,7 +118,7 @@ def create_lstm_model(input_size, hidden_size, num_layers):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 input_size = 1
 num_layers = 2
-hidden_size = 64
+hidden_size = 80 #62
 output_size = 1
 model = create_lstm_model(input_size, hidden_size, num_layers).to(device)
 loss_fn = torch.nn.MSELoss(reduction='mean')
