@@ -10,6 +10,7 @@ import os
 from file_processor import work_on_file
 from flask_mail import Mail, Message
 import smtplib
+import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -45,6 +46,37 @@ class User(db.Model):
 @app.before_first_request
 def create_tables():
     db.create_all()
+
+def send_mail_for_reminder():
+    me = "orderboost2024@gmail.com"
+    dest = "ninel.benush@gmail.com"
+
+    msg = MIMEMultipart()
+    msg['From'] = me
+    msg['To'] = dest
+    msg['Subject'] = "Reminder!"
+
+    date = datetime.datetime.now()
+    new_date = date + datetime.timedelta(days=5)
+    day = new_date.day
+    month = new_date.month
+    year = new_date.year
+
+    body = f"Don't forget to make the payment by {day}/{month}/{year}"
+    msg.attach(MIMEText(body, 'plain'))
+
+    img_path = "Reminder.png"
+    with open(img_path, "rb") as image_file:
+        image = MIMEImage(image_file.read(), name=os.path.basename(img_path))
+        msg.attach(image)
+    
+    with smtplib.SMTP('smtp.gmail.com', 587) as s:
+        s.starttls()
+        s.login(me,"nizs kjcb niwc debn")
+        s.sendmail(me, dest, msg.as_string())
+        s.quit()
+
+
 
 def send_mail_for_r(email):  #register
     me = "orderboost2024@gmail.com"
@@ -124,11 +156,12 @@ def send_predictions(file_path):
 
 
 
-#@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET'])
 def root():
+    send_mail_for_reminder()
     return jsonify({"message": "ok"})
 
-@app.route('/',methods=['GET'])
+#@app.route('/',methods=['GET'])
 def download_file():
     try:
         file_path = os.path.join(app.root_path, 'files', 'C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/DataForPrediction/data2.csv')
