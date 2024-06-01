@@ -21,7 +21,6 @@ function App(){
         console.log('Data from  API:' + data.message);
       })
       .catch(error => {
-        console.error('Error:', error);
       });
   }, []);
 
