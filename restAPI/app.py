@@ -15,13 +15,6 @@ import datetime
 app = Flask(__name__)
 CORS(app)
 
-app.config['MAIL_SERVER']='live.smtp.mailtrap.io'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = 'api'
-app.config['MAIL_PASSWORD'] = '06a770732fb9caaaa48f3c7ac08c3031'
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-
 mail = Mail(app)
 
 # Use the correct absolute path to the new database file
@@ -158,22 +151,8 @@ def send_predictions(file_path):
 
 @app.route('/', methods=['GET'])
 def root():
-    send_mail_for_reminder()
     return jsonify({"message": "ok"})
 
-#@app.route('/',methods=['GET'])
-def download_file():
-    try:
-        file_path = os.path.join(app.root_path, 'files', 'C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/DataForPrediction/data2.csv')
-        if not os.path.isfile(file_path):
-            app.logger.error(f"File not found: {file_path}")
-            return f"File not found: {file_path}", 404
-        send_predictions(file_path)
-        return send_file(file_path, as_attachment=True)
-    except Exception as e:
-        app.logger.error(f"Error sending file: {e}")
-        return str(e), 500
-    
 
 
 def create_user(username, password, email):
@@ -182,7 +161,7 @@ def create_user(username, password, email):
     db.session.commit()
 
 
-@app.route("/", methods=['POST'])
+@app.route("/upload-file", methods=['POST'])
 def handle_post():
     if 'file' in request.files:
         # Handle file upload
@@ -197,37 +176,56 @@ def handle_post():
         work_on_file(file_path)
 
         return f'File {filename} uploaded successfully'
-    elif request.is_json:
-        # Handle registration or login
-        data = request.get_json()
-        if 'username' in data and 'password' in data and 'email' in data:
-            # Register new user
-            username = data['username'].strip()
-            password = data['password'].strip()
-            email = data['email'].strip()
-            user = User.query.filter_by(email=email).first()
-
-            if user:
-                app.logger.info(f"Account already exists with this email: {user.email}")
-                return jsonify({"message": "Account already exists with this email"}), 409
-            
-            create_user(username, password, email)
-
-            send_mail_for_r(email)
-
-            return jsonify({"message": "User registered successfully"}), 201
-        elif 'username' in data and 'password' in data:
-            # Login
-            username = data['username'].strip()
-            password = data['password'].strip()
-            user = User.query.filter_by(username=username).first()
-
-            if user and user.password == password:
-                message = "Login successful"
-                return jsonify({"message": message})
-            else:
-                return jsonify({"message": "Invalid username or password"}), 401
     return 'Bad Request', 400
+
+
+@app.route("/register", methods=['POST'])
+def handle_register():
+    data = request.get_json()
+    if 'username' in data and 'password' in data and 'email' in data:
+            # Register new user
+        username = data['username'].strip()
+        password = data['password'].strip()
+        email = data['email'].strip()
+        user = User.query.filter_by(email=email).first()
+
+        if user:
+            app.logger.info(f"Account already exists with this email: {user.email}")
+            return jsonify({"message": "Account already exists with this email"}), 409
+            
+        create_user(username, password, email)
+
+        send_mail_for_r(email)
+
+        return jsonify({"message": "User registered successfully"}), 201
+
+
+@app.route("/login", methods=["POST"])
+def handle_login():
+    data = request.get_json()
+    if 'username' in data and 'password' in data:
+        username = data['username'].strip()
+        password = data['password'].strip()
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.password == password:
+            message = "Login successful"
+            return jsonify({"message":message})
+        else:
+            return jsonify ({"message": "Invalid username or password"}), 401
+
+@app.route("/download-file", methods=['GET'])
+def download_file():
+    try:
+        file_path = os.path.join(app.root_path, 'files', 'C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/DataForPrediction/data.csv')
+        if not os.path.isfile(file_path):
+            app.logger.error(f"File not found: {file_path}")
+            return f"File not found: {file_path}", 404
+        send_predictions(file_path)
+        return send_file(file_path, as_attachment=True, mimetype='text/csv')
+    except Exception as e:
+        app.logger.error(f"Error sending file: {e}")
+        return str(e), 500
 
 
 if __name__ == '__main__':

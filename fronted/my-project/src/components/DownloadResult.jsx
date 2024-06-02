@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { FaFileDownload } from "react-icons/fa";
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 const FileDownload = () => {
     const [message, setMessage] = useState('');
 
     const downloadFile = () => {
-        axios.get('http://localhost:5000', {
+        axios.get('http://localhost:5000/download-file', {
             responseType: 'blob'  // Important for handling binary data
         })
         .then((response) => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'DataPrediction.csv'; // You can set the filename here
+            a.download = 'DataPrediction.csv'; 
             document.body.appendChild(a);
             a.click();
             a.remove();
@@ -28,6 +30,8 @@ const FileDownload = () => {
     };
 
     return (
+    <div>
+        <Navbar />
         <div>
        <div className="hero min-h-screen bg-base-200">
         <div className="hero-content text-center">
@@ -40,6 +44,8 @@ const FileDownload = () => {
        </div>
      </div>
      </div>
+     <Footer />
+    </div>
 
     );
 };

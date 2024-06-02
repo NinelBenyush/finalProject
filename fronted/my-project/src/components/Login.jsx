@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { CiLogin } from "react-icons/ci";
+import Navbar from './Navbar';
+import Footer from "./Footer";
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -12,7 +14,7 @@ const Login = () => {
     setLoading(true);
     const data = { username, password };
     console.log('Sending login data:', data);  // Debug log
-    axios.post('http://localhost:5000/', data)
+    axios.post('http://localhost:5000/login', data)
       .then((res) => {
         console.log('Response:', res.data);  // Debug log
         setMessage(res.data.message);
@@ -30,6 +32,8 @@ const Login = () => {
   };
 
   return (
+    <div>
+      <Navbar />
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 flex items-center justify-center">
@@ -90,6 +94,8 @@ const Login = () => {
         )}
         {message && <p className="mt-4 text-green-500">{message}</p>}
       </div>
+    </div>
+    <Footer />
     </div>
   );
 };

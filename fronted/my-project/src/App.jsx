@@ -10,10 +10,35 @@ import Footer from "./components/Footer";
 import DetailsAccount from "./components/DetailsAccount";
 import DownloadResult from "./components/DownloadResult";
 import Profile from "./components/Profile";
+import {RouterProvider, createBrowserRouter} from 'react-router-dom';
+import Home from "./components/Home";
+
+const router = createBrowserRouter([
+  {
+    path:"/", 
+    element: <Home />,
+  },
+  {
+    path:"/login",
+    element: <Login />,
+  },
+  {
+    path:"/register",
+    element:<Register />,
+  },
+  {
+    path:"/upload-file",
+    element: <InsertData />,
+  },
+  {
+    path:"/download-file",
+    element:<DownloadResult />
+  }
+
+
+])
 
 function App(){
-  
-
   useEffect(() => {
     fetch('http://localhost:5000/')
       .then(response => response.json())
@@ -26,19 +51,9 @@ function App(){
 
 
   return (
-    <>
-    <Navbar  />
-    <Hero />
-    <Start/>
-    <About />
-    <Login />
-    <InsertData />
-    <Register />
-    <DetailsAccount />
-    <DownloadResult />
-    <Profile />
-    <Footer />
-    </>
+   // <>
+    <RouterProvider router={router} />
+    //</>
   )
 }
 

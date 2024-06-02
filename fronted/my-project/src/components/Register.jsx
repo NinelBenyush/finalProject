@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -18,7 +20,7 @@ function Register() {
     const data = {username, password, email};
     console.log('Sending register data:', data); 
 
-    axios.post('http://localhost:5000/', data)
+    axios.post('http://localhost:5000/register', data)
     .then((res) => {
       console.log('reponse', res.data);
       setMessage(res.data.message);
@@ -39,6 +41,8 @@ function Register() {
 
 
     return (
+      <div>
+        <Navbar/>
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
         <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
           <h1 className="text-2xl font-bold mb-6 flex items-center justify-center">
@@ -147,6 +151,8 @@ function Register() {
         )}
         {message && <p className="mt-4 text-green-500">{message}</p>}
         </div>
+      </div>
+      <Footer/>
       </div>
     );
   }

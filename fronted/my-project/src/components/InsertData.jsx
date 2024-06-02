@@ -1,6 +1,8 @@
 import img from "../assets/insertData2.jpg";
 import React, {useState} from "react";
 import axios from "axios";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 
 function InsertData(){
@@ -28,7 +30,7 @@ function InsertData(){
         formData.append('file', file);
       
         try {
-          const response = await axios.post('http://localhost:5000/', formData, {
+          const response = await axios.post('http://localhost:5000/upload-file', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
@@ -43,6 +45,8 @@ function InsertData(){
       };
 
     return (
+      <div>
+        <Navbar />
 <div className="flex justify-center items-center min-h-screen">
   <div className="card card-side bg-base-100 shadow-xl" style={{ width: '600px' }}>
     <figure>
@@ -74,6 +78,8 @@ function InsertData(){
       </div>
     </div>
   </div>
+</div>
+<Footer />
 </div>
 
 
