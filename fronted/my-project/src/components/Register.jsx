@@ -10,10 +10,23 @@ function Register() {
   const [ email, setEmail] = useState('');
   const  [loading, setLoading] = useState(false);
   const [ message, setMessage] = useState('');
+  const [emailError, setEmailError] = useState('');
+
+  const validateEmail = (email) => {
+    if (!email.includes('@')) {
+      setEmailError('Email is not valid.');
+    } else {
+      setEmailError('');
+    }
+  };
   
   const sendRegister = () => {
     if(password!== confirmPassword){
       setMessage("passwords dont match")
+      return;
+    }
+    if (!email.includes('@')) {
+      setMessage('Email is not valid.');
       return;
     }
     setLoading(true)
@@ -64,9 +77,13 @@ function Register() {
                 placeholder="Email"
                 className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
                 value = {email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                    validateEmail(e.target.value);
+                }}
               />
             </label>
+            {emailError && <p className="mt-2 text-red-500">{emailError}</p>}
           </div>
   
           <div className="mb-4 w-full">
