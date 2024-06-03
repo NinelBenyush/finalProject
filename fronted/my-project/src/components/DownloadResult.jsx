@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { FaFileDownload } from "react-icons/fa";
-import Navbar from './Navbar';
+import MiniNavbar from "./MiniNabvar";
 import Footer from './Footer';
 
 const FileDownload = () => {
@@ -31,7 +31,7 @@ const FileDownload = () => {
 
     return (
     <div>
-        <Navbar />
+        <MiniNavbar />
         <div>
        <div className="hero min-h-screen bg-base-200">
         <div className="hero-content text-center">

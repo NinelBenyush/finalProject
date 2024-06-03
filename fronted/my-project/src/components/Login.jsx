@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { CiLogin } from "react-icons/ci";
-import Navbar from './Navbar';
+import MiniNavbar from "./MiniNabvar";
 import Footer from "./Footer";
 
 
@@ -34,7 +34,7 @@ const Login = () => {
 
   return (
     <div>
-      <Navbar />
+      <MiniNavbar />
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 flex items-center justify-center">

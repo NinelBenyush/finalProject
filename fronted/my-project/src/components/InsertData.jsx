@@ -1,8 +1,8 @@
 import img from "../assets/insertData2.jpg";
 import React, {useState} from "react";
 import axios from "axios";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
+import MiniNavbar from "./MiniNabvar";
 
 
 function InsertData(){
@@ -46,7 +46,7 @@ function InsertData(){
 
     return (
       <div>
-        <Navbar />
+        <MiniNavbar />
 <div className="flex justify-center items-center min-h-screen">
   <div className="card card-side bg-base-100 shadow-xl" style={{ width: '600px' }}>
     <figure>
