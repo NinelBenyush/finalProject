@@ -195,7 +195,7 @@ def handle_register():
             
         create_user(username, password, email)
 
-        send_mail_for_r(email)
+        #send_mail_for_r(email)
 
         return jsonify({"message": "User registered successfully"}), 201
 

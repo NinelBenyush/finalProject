@@ -31,10 +31,8 @@ data.drop(columns=['Unnamed: 0'], inplace=True)
 
 final_data = data[["Inventory", "Value", "code_p"]]
 
-
-
-final_data['Value'] = final_data['Value']
-final_data['Inventory'] = final_data['Inventory'] 
+#final_data['Value'] = final_data['Value']
+#final_data['Inventory'] = final_data['Inventory'] 
 
 scaler = MinMaxScaler()
 final_data['Value'] = scaler.fit_transform(final_data[['Value']])
@@ -118,8 +116,8 @@ def create_lstm_model(input_size, hidden_size, num_layers):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 input_size = 1
-num_layers = 2
-hidden_size = 80 #62
+num_layers = 3
+hidden_size = 80 #62 80
 output_size = 1
 model = create_lstm_model(input_size, hidden_size, num_layers).to(device)
 loss_fn = torch.nn.MSELoss(reduction='mean')
@@ -132,6 +130,7 @@ train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size,
 
 test_dataset = torch.utils.data.TensorDataset(X_test, y_test)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
 
 
 def train_lstm_model(model, train_loader, test_loader, num_epochs, optimizer, loss_fn, device):
@@ -190,6 +189,19 @@ plt.plot(x, test_hist, label="Test loss")
 plt.legend()
 plt.show()
 
+
+def prepare_sequences(data, sequence_length):
+    sequences = []
+    code_p_values = []
+    
+    for code_p, group in data.groupby('code_p'):
+        values = group['Value'].values
+        for i in range(len(values) - sequence_length + 1):
+            sequences.append(values[i:i + sequence_length])
+            code_p_values.append(code_p)
+    
+    return np.array(sequences), code_p_values
+
 def forecast_future_values(model, X_test, test_data, device, num_forecast_steps):
     all_forecasted_values = []
     code_p_values = []
@@ -213,7 +225,6 @@ def forecast_future_values(model, X_test, test_data, device, num_forecast_steps)
             all_forecasted_values.append(forecasted_values)
 
     return np.array(all_forecasted_values), code_p_values
-
 
 forecasted_values, code_p_values = forecast_future_values(model, X_test, test_data, device, num_forecast_steps=12)
 print("forcasted values",forecasted_values)
@@ -252,6 +263,7 @@ print(inverse_transformed_df)
 
 inverse_transformed_df = inverse_transformed_df.apply(lambda x: x.astype(int))
 print(inverse_transformed_df)
+
 
 
 normalized_graph = inverse_transformed_df.iloc[:, :3]

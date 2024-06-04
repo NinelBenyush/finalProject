@@ -12,6 +12,7 @@ import DownloadResult from "./components/DownloadResult";
 import Profile from "./components/Profile";
 import {RouterProvider, createBrowserRouter} from 'react-router-dom';
 import Home from "./components/Home";
+import ProfilePage from "./components/ProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path:"/download-file",
     element:<DownloadResult />
+  },
+  {
+    path:"/profile",
+    element:<ProfilePage />
   }
 
 

@@ -16,6 +16,11 @@ export const dropdownLinks = [
   { id: nanoid(), href: '#about', text: 'About' },
 ];
 
+export const profileLinks = [
+  { id:nanoid(), href:"profile/basic-info", text:"Basic Information"},
+  { id:nanoid(), href:"profile/messages", text:"Messages"},
+];
+
 export const start = [
   {
     id: nanoid(),
