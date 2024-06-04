@@ -26,6 +26,10 @@ export const handleFile = [
   {id:nanoid(), href:"/download-file", text:"download file"},
 ];
 
+export const account = [
+  {id:nanoid(), href:"/profile",text:"account"},
+]
+
 export const start = [
   {
     id: nanoid(),

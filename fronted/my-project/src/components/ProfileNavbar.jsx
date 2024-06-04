@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { links,profileLinks,handleFile } from "../data";
+import { links,profileLinks,handleFile,account } from "../data";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdAccountCircle } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
@@ -39,9 +39,14 @@ function ProfileNavbar(){
   </li>
 
   <li>
-    <a className="tooltip" data-tip="Account">
-    <MdAccountCircle className="h-5 w-5" />
-    </a>
+  {account.map((link) => {
+                        const { id, href, text} = link;
+                        return (
+                            <a key={id} href={href} className="tooltip" data-tip="Account">
+                            <MdAccountCircle className="h-5 w-5" />
+                            </a>
+                        );
+                    })}
   </li>
 
   <li>
@@ -71,7 +76,7 @@ function ProfileNavbar(){
   {info.map((link) => {
         const { id, href, text} = link;
              return (
-                  <a key={id} href={href} className="tooltip" data-tip="Download results file">
+                  <a key={id} href={href} className="tooltip" data-tip="Basic info">
                     <MdInfo className="h-5 w-5" />
                      </a>
                     );

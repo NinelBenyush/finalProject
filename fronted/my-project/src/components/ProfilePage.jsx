@@ -2,12 +2,14 @@ import React from "react";
 import ProfileNavbar from "./ProfileNavbar";
 import Footer from "./Footer";
 import profileImg from "../assets/profileImg.png"
+import Sidebar from "./Sidebar";
 
 
 function ProfilePage() {
   return (
     <>
       <ProfileNavbar transparent />
+      <Sidebar />
       <main className="profile-page">
         <section className="relative block" style={{ height: "500px" }}>
           <div
