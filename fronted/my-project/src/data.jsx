@@ -17,8 +17,13 @@ export const dropdownLinks = [
 ];
 
 export const profileLinks = [
-  { id:nanoid(), href:"profile/basic-info", text:"Basic Information"},
+  { id:nanoid(), href:"/basic-info", text:"Basic Information"},
   { id:nanoid(), href:"profile/messages", text:"Messages"},
+];
+
+export const handleFile = [
+  {id:nanoid(), href:"/upload-file", text:"upload file"},
+  {id:nanoid(), href:"/download-file", text:"download file"},
 ];
 
 export const start = [
