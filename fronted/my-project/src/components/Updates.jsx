@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ProfileNavbar from './ProfileNavbar';
+import Footer from './Footer';
+import { FiMessageSquare } from "react-icons/fi";
 
 const Updates = () => {
   const [messages, setMessages] = useState([]);
@@ -35,8 +37,12 @@ const Updates = () => {
   return (
     <>
       <ProfileNavbar />
-      <div className="messages-container p-4 bg-gray-100 rounded-md shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4">Messages</h2>
+      <div className="messages-container h-screen  p-4 bg-gray-100 rounded-md shadow-lg">
+      <h2 className="text-2xl font-semibold mb-4 flex items-center">
+       Messages
+        <span className="ml-2"><FiMessageSquare className="h-7 w-7" /></span>
+       </h2>
+
         {Array.isArray(messages) && messages.length > 0 ? (
             <ul className="space-y-2">
   {messages.map((message, index) => (
@@ -51,6 +57,8 @@ const Updates = () => {
           <p className="text-gray-500">No messages yet</p>
         )}
       </div>
+      <Footer />
+ 
     </>
   );
 };
