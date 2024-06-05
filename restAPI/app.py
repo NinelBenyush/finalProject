@@ -3,10 +3,13 @@ from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from pyexpat.errors import messages
 from flask import Flask, request, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
+
+import requests
 from file_processor import work_on_file
 from flask_mail import Mail, Message
 import smtplib
@@ -50,7 +53,7 @@ def send_mail_for_reminder():
     msg['Subject'] = "Reminder!"
 
     date = datetime.datetime.now()
-    new_date = date + datetime.timedelta(days=5)
+    new_date = date + datetime.timedelta(days=6)
     day = new_date.day
     month = new_date.month
     year = new_date.year
@@ -68,6 +71,18 @@ def send_mail_for_reminder():
         s.login(me,"nizs kjcb niwc debn")
         s.sendmail(me, dest, msg.as_string())
         s.quit()
+
+    reminder_message = {
+        "content": body,
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d")
+    }
+    try:
+        response = requests.post("http://localhost:5000/profile/updates", json=reminder_message)
+        response.raise_for_status()  # Raise an error for bad status codes
+        print("Reminder message sent to server successfully")
+    except requests.exceptions.RequestException as e:
+        print(f"Error sending reminder message to server: {e}")
+    return reminder_message
 
 
 
@@ -151,8 +166,21 @@ def send_predictions(file_path):
 
 @app.route('/', methods=['GET'])
 def root():
+    send_mail_for_reminder()
     return jsonify({"message": "ok"})
 
+@app.route('/profile/updates', methods=['GET'])
+def get_updates():
+    # Implement logic to retrieve and return messages
+    return jsonify([send_mail_for_reminder()]),200
+
+
+@app.route('/profile/updates', methods=['POST'])
+def profile_updates():
+    reminder_message = request.json
+    print("message:", reminder_message)
+    # Add the reminder_message to your database or process it as needed
+    return jsonify({"message": "Reminder message received"}), 201
 
 
 def create_user(username, password, email):

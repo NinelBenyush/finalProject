@@ -58,7 +58,7 @@ const Sidebar = () => {
                   <span> Results</span>
                 </a>
                 <a
-                  href="#"
+                  href="/profile/updates"
                   className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-emerald-400 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
                 >
                   <IoMdNotifications className="w-6 h-6 inline-block" />
@@ -85,6 +85,7 @@ const Sidebar = () => {
               {/* Insert your content here */}
             </div>
           </div>
+          
         </div>
       </div>
     </div>

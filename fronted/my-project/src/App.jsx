@@ -13,6 +13,7 @@ import Profile from "./components/Profile";
 import {RouterProvider, createBrowserRouter} from 'react-router-dom';
 import Home from "./components/Home";
 import ProfilePage from "./components/ProfilePage";
+import Updates from "./components/Updates";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path:"/basic-info",
     element:<DetailsAccount />,
+  },
+  {
+    path:"/profile/updates",
+    element: <Updates />
   }
 
 
