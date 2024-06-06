@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { links } from "../data";
 
 function MiniNavbar() {
-    const filteredLinks = links.filter((link) => link.text !== 'Log in');
+    const filteredLinks = links.filter((link) => link.text !== 'Register');
 
     return (
         <nav className="bg-emerald-100">

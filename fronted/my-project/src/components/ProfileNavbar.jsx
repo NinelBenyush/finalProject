@@ -13,7 +13,7 @@ function ProfileNavbar(){
 
     const info = profileLinks.filter((link) => link.text!=="Messages")
     const message = profileLinks.filter((link) => link.text!=="Basic Information")
-    const filteredLinks = links.filter((link) => link.text !== 'Log in');
+    const filteredLinks = links.filter((link) => link.text !== 'Register');
     const upload = handleFile.filter((link) => link.text !== 'download file');
     const download =  handleFile.filter((link) => link.text !== 'upload file');
     

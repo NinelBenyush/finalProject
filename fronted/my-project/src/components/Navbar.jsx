@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { links, dropdownLinks } from "../data";
+import { links,profile, dropdownLinks } from "../data";
 
 function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -17,6 +17,15 @@ function Navbar() {
         </h2>
         <div className="flex gap-x-3">
           {links.map((link) => {
+            const { id, href, text } = link;
+            return (
+              <a key={id} href={href} className="capitalized text-lg tracking-wide hover:text-emerald-600 duration-300">
+                {text}
+              </a>
+            );
+          })}
+
+           {profile.map((link) => {
             const { id, href, text } = link;
             return (
               <a key={id} href={href} className="capitalized text-lg tracking-wide hover:text-emerald-600 duration-300">

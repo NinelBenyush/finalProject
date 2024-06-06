@@ -3,6 +3,7 @@ import axios from 'axios';
 import ProfileNavbar from './ProfileNavbar';
 import Footer from './Footer';
 import { FiMessageSquare } from "react-icons/fi";
+import { MdPayment } from "react-icons/md";
 
 const Updates = () => {
   const [messages, setMessages] = useState([]);
@@ -47,8 +48,9 @@ const Updates = () => {
             <ul className="space-y-2">
   {messages.map((message, index) => (
     <li key={index} className="p-2 bg-white rounded-md shadow-sm">
-      <p className="text-gray-800">{message.content}</p>
+      <p className="text-gray-800">{message.content}<span className="ml-2"><MdPayment /> </span></p>
       <span className="text-sm text-gray-500">{message.timestamp}</span>
+      
     </li>
   ))}
 </ul>

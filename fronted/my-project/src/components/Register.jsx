@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import MiniNavbar from "./MiniNabvar";
 import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -11,6 +12,7 @@ function Register() {
   const  [loading, setLoading] = useState(false);
   const [ message, setMessage] = useState('');
   const [emailError, setEmailError] = useState('');
+  const navigate = useNavigate(); 
 
   const validateEmail = (email) => {
     if (!email.includes('@')) {
@@ -38,6 +40,7 @@ function Register() {
       console.log('reponse', res.data);
       setMessage(res.data.message);
       setLoading(false);
+      navigate("/profile");
     })
     .cacth((err) => {
       console.log("error",err);

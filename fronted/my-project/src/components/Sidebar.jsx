@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TbFileSearch } from "react-icons/tb";
 import { IoMdNotifications } from "react-icons/io";
 import { IoInformationCircleSharp } from "react-icons/io5";
+import { IoLogInOutline } from "react-icons/io5";
 
 const Sidebar = () => {
   const [sidenav, setSidenav] = useState(true);
@@ -50,8 +51,17 @@ const Sidebar = () => {
               </div>
 
               <div id="menu" className="flex flex-col space-y-2">
+
+                 <a
+                  href="/login"
+                  className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-emerald-400 hover:text-white hover:text-base rounded-md transition duration-150 ease-in-out"
+                >
+                  <IoLogInOutline className="w-7 h-7 inline-block" />
+                  <span> Login</span>
+                </a>
+
                 <a
-                  href="#"
+                  href="/profile/results"
                   className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-emerald-400 hover:text-white hover:text-base rounded-md transition duration-150 ease-in-out"
                 >
                   <TbFileSearch className="w-6 h-6 inline-block" />
@@ -65,7 +75,7 @@ const Sidebar = () => {
                   <span>Updates</span>
                 </a>
                 <a
-                  href="#"
+                  href="/basic-info"
                   className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-emerald-400 hover:text-white hover:text-base rounded-md transition duration-150 ease-in-out"
                 >
                   <IoInformationCircleSharp className="w-6 h-6 inline-block" />

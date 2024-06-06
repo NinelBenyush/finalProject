@@ -3,6 +3,7 @@ import axios from 'axios';
 import { CiLogin } from "react-icons/ci";
 import MiniNavbar from "./MiniNabvar";
 import Footer from "./Footer";
+import { useNavigate } from 'react-router-dom';
 
 
 const Login = () => {
@@ -10,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   
   const sendLogin = () => {
     setLoading(true);
@@ -20,6 +22,7 @@ const Login = () => {
         console.log('Response:', res.data);  // Debug log
         setMessage(res.data.message);
         setLoading(false);
+        navigate('/profile');
       })
       .catch((err) => {
         console.error('Error:', err);  // Debug log

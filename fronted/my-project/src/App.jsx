@@ -14,6 +14,7 @@ import {RouterProvider, createBrowserRouter} from 'react-router-dom';
 import Home from "./components/Home";
 import ProfilePage from "./components/ProfilePage";
 import Updates from "./components/Updates";
+import Results from "./components/Results";
 
 const router = createBrowserRouter([
   {
@@ -47,12 +48,23 @@ const router = createBrowserRouter([
   {
     path:"/profile/updates",
     element: <Updates />
-  }
+  },
+  {
+    path:"/profile/results",
+    element: <Results />
+  },
+
 
 
 ])
 
 function App(){
+
+  useEffect(() => {
+    localStorage.removeItem('token'); // Assuming you store the token in localStorage
+    localStorage.removeItem('user');  // Assuming you store user info in localStorage
+  }, []);
+
   useEffect(() => {
     fetch('http://localhost:5000/')
       .then(response => response.json())
