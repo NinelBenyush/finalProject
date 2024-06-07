@@ -3,6 +3,7 @@ import { TbFileSearch } from "react-icons/tb";
 import { IoMdNotifications } from "react-icons/io";
 import { IoInformationCircleSharp } from "react-icons/io5";
 import { IoLogInOutline } from "react-icons/io5";
+import { BsFillClipboard2DataFill } from "react-icons/bs";
 
 
 const Sidebar = () => {
@@ -68,6 +69,14 @@ const Sidebar = () => {
                 >
                   <IoLogInOutline className="w-7 h-7 inline-block" />
                   <span> Login</span>
+                </a>
+
+                <a
+                  href="profile/files"
+                  className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-emerald-400 hover:text-white hover:text-base rounded-md transition duration-150 ease-in-out"
+                >
+                  <BsFillClipboard2DataFill  className="w-6 h-6 inline-block" />
+                  <span> Uploaded Files</span>
                 </a>
 
                 <a

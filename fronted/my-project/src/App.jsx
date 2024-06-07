@@ -16,6 +16,8 @@ import ProfilePage from "./components/ProfilePage";
 import Updates from "./components/Updates";
 import Results from "./components/Results";
 
+
+
 const router = createBrowserRouter([
   {
     path:"/", 
@@ -53,6 +55,7 @@ const router = createBrowserRouter([
     path:"/profile/results",
     element: <Results />
   },
+  
 
 
 
@@ -78,7 +81,6 @@ function App(){
 
   return (
     <>
-
     <RouterProvider router={router} />
     </>
   )
