@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TbFileSearch } from "react-icons/tb";
 import { IoMdNotifications } from "react-icons/io";
 import { IoInformationCircleSharp } from "react-icons/io5";
 import { IoLogInOutline } from "react-icons/io5";
+
 
 const Sidebar = () => {
   const [sidenav, setSidenav] = useState(true);
@@ -10,6 +11,15 @@ const Sidebar = () => {
   const handleSidebarToggle = () => {
     setSidenav(!sidenav);
   };
+
+  //const [username, setUsername] = useState("");
+
+  //useEffect(() => {
+   // const user = localStorage.getItem('user');
+   // if (user) {
+   //   setUsername(JSON.parse(user).username);
+  //  }
+  //},[]);
 
   return (
     <div className="font-poppins antialiased">

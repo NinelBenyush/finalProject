@@ -8,8 +8,8 @@ import "./index.css";
 
 export const links = [
   { id: nanoid(), href: '/', text: 'Home' },
-  { id: nanoid(), href: '/register', text: 'Register' },
- // { id: nanoid(), href: '/login', text: 'Log in' },
+  //{ id: nanoid(), href: '/register', text: 'Register' },
+  { id: nanoid(), href: '/login', text: 'Log in' },
 ];
 
 export const profile = [

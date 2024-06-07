@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Switch } from '@headlessui/react';
 import { IoIosInformationCircleOutline } from "react-icons/io";
+import ProfileNavbar from "./ProfileNavbar";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -9,7 +10,9 @@ function classNames(...classes) {
 
 function DetailsAccount() {
   return (
-    <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
+    <>
+    <ProfileNavbar/>
+        <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div
         className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
         aria-hidden="true"
@@ -141,6 +144,7 @@ function DetailsAccount() {
         </div>
       </form>
     </div>
+    </>
   );
 }
 

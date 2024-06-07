@@ -4,6 +4,7 @@ import { CiLogin } from "react-icons/ci";
 import MiniNavbar from "./MiniNabvar";
 import Footer from "./Footer";
 import { useNavigate } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 
 const Login = () => {
@@ -22,6 +23,8 @@ const Login = () => {
         console.log('Response:', res.data);  // Debug log
         setMessage(res.data.message);
         setLoading(false);
+        //localStorage.setItem('token', res.data.token);
+       // localStorage.setItem('user', JSON.stringify(res.data.user));
         navigate('/profile');
       })
       .catch((err) => {
@@ -85,6 +88,11 @@ const Login = () => {
             />
           </label>
         </div>
+
+        <Link to="/register" className="link link-hover mb-2 ">
+        Dont have an account yet?
+        </Link>
+
         <button
           onClick={() => sendLogin()}
           className="bg-emerald-500 text-white py-2 px-4 rounded hover:bg-emerald-200 transition-colors duration-300 w-full"
