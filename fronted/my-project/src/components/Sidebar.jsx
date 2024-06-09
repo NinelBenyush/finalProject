@@ -4,6 +4,7 @@ import { IoMdNotifications } from "react-icons/io";
 import { IoInformationCircleSharp } from "react-icons/io5";
 import { IoLogInOutline } from "react-icons/io5";
 import { BsFillClipboard2DataFill } from "react-icons/bs";
+import UploadNewFile from './UploadNewFile';
 
 
 const Sidebar = () => {
@@ -111,7 +112,7 @@ const Sidebar = () => {
             </h1>
             <h2 className="text-md text-gray-400">Welcome back</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 p-4 gap-4">
-              {/* Insert your content here */}
+            <UploadNewFile/>
             </div>
           </div>
           

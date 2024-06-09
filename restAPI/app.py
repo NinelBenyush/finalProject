@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
+from sqlalchemy import text
 
 
 import requests
@@ -23,6 +24,9 @@ mail = Mail(app)
 
 # Use the correct absolute path to the new database file
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/new_users.db'
+app.config['SQLALCHEMY_BINDS'] = {
+    'files_db': 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/uploaded_files.db'
+}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress a warning
 db = SQLAlchemy(app)
 UPLOAD_FOLDER = "./UPLOAD_FOLDER"
@@ -40,9 +44,27 @@ class User(db.Model):
         self.password = password
         self.email = email
 
+class UploadFiles(db.Model):
+    __bind_key__ = 'files_db' 
+    __tablename__ = 'UploadFiles'
+    id = db.Column(db.Integer, primary_key=True)
+    file_name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(400), nullable=False)
+
+    def __init__(self, file_name, description):
+        self.file_name = file_name
+        self.description = description
+
 @app.before_first_request
 def create_tables():
     db.create_all()
+    with app.app_context():
+        bind_key = 'files_db'
+        query = text("CREATE TABLE IF NOT EXISTS file_details (id INTEGER NOT NULL, filename VARCHAR(200) NOT NULL, description VARCHAR(500) NOT NULL, PRIMARY KEY (id));")
+        db.session.execute(query)
+        db.session.commit()
+        
+
 
 def send_mail_for_reminder():
     me = "orderboost2024@gmail.com"
@@ -256,25 +278,29 @@ def download_file():
         app.logger.error(f"Error sending file: {e}")
         return str(e), 500
     
-@app.route("/UploadNewFile", methods=['GET'])
+@app.route("/profile", methods=['POST'])
 def confirm_new_file():
-    filename = request.args.get('filename')
-    description = request.args.get('description')
-
-    if filename and description:
+    data = request.json
+    if 'filename' in data and 'description' in data:
+        filename = data['filename']
+        description = data['description']
+        new_file = UploadFiles(filename, description)
+        db.session.add(new_file)
+        db.session.commit()
         response = {
             'status': 'success',
             'message': 'File details received',
             'filename': filename,
             'description': description
         }
+        return jsonify(response), 201
     else:
         response = {
             'status': 'error',
             'message': 'Missing filename or description'
         }
-    
-    return jsonify(response),202
+        return jsonify(response), 400
+
 
 
 

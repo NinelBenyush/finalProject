@@ -9,15 +9,14 @@ function UploadNewFile() {
     const [response, setResponse] = useState(null);
 
     const handleUpload = async (e) => {
-        e.preventDefault(); // Prevent the default form submission
+        e.preventDefault(); 
         try {
-            const res = await axios.get('http://localhost:5000/UploadNewFile', {
-                params: {
+            const res = await axios.post('http://localhost:5000/profile', {
                     filename,
                     description
-                }
             });
             setResponse(res.data);
+            navigate('/upload-file');
             if (res.data.status === 'success') {
                 navigate('/upload-file');
             }
@@ -28,6 +27,7 @@ function UploadNewFile() {
 
     return (
         <div className="m-10">
+            <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
             <form onSubmit={handleUpload}>
                 <div className="space-y-12">
                     <div className="border-b border-gray-900/10 pb-12">
@@ -87,6 +87,7 @@ function UploadNewFile() {
                     </button>
                 </div>
             </form>
+            </div>
         </div>
     );
 }

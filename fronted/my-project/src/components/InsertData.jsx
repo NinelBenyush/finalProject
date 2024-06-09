@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Footer from "./Footer";
 import MiniNavbar from "./MiniNabvar";
+import { useNavigate } from "react-router-dom";
 
 function InsertData() {
+  const navigate = useNavigate();
   const [fileName, setFileName] = useState('');
   const [file, setFile] = useState(null);
   const [successUpload, setSuccessUpload] = useState(false);
@@ -14,7 +16,7 @@ function InsertData() {
     if (file) {
       setFile(file);
       setFileName(file.name);
-      setSuccessUpload(false); // Reset success message when a new file is selected
+      setSuccessUpload(false); 
     } else {
       setFileName('');
     }
@@ -38,7 +40,7 @@ function InsertData() {
       // Reset the file state after successful upload
       setFile(null);
       setFileName('');
-      setSuccessUpload(true); // Set upload success to true
+      setSuccessUpload(true); 
     } catch (error) {
       console.error('Error uploading file:', error);
     }
@@ -48,6 +50,7 @@ function InsertData() {
     if(successUpload){
       const timer = setTimeout(()=>{
         setSuccessUpload(false);
+        navigate("/profile");
       }, 2000);
       return () => clearTimeout(timer);
     }
