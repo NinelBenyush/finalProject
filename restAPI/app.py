@@ -255,6 +255,27 @@ def download_file():
     except Exception as e:
         app.logger.error(f"Error sending file: {e}")
         return str(e), 500
+    
+@app.route("/UploadNewFile", methods=['GET'])
+def confirm_new_file():
+    filename = request.args.get('filename')
+    description = request.args.get('description')
+
+    if filename and description:
+        response = {
+            'status': 'success',
+            'message': 'File details received',
+            'filename': filename,
+            'description': description
+        }
+    else:
+        response = {
+            'status': 'error',
+            'message': 'Missing filename or description'
+        }
+    
+    return jsonify(response),202
+
 
 
 if __name__ == '__main__':
