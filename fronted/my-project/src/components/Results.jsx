@@ -46,11 +46,15 @@ const Results = () => {
                 </h2>
                 {Array.isArray(results) && results.length > 0 ? (
                     <ul className="space-y-2">
-                        {results.map((res) => (
-                            <li key={res.id} className="bg-white p-4 mb-4 rounded-md shadow-md">
-                                <p>{res.text}</p>
-                                {res.fileUrl && (
+                        {results.map((res, index) => (
+                            <li key={index} className="bg-white p-4 mb-4 rounded-md shadow-md">
+                                <p>{res.filename}</p>
+                                {res.fileUrl ? (
                                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2" onClick={() => downloadFile(res.fileUrl)}>
+                                        Download File
+                                    </button>
+                                ) : (
+                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2" onClick={() => downloadFile(`http://localhost:5000/download/${res.filename}`)}>
                                         Download File
                                     </button>
                                 )}
@@ -58,8 +62,8 @@ const Results = () => {
                         ))}
                     </ul>
                 ) : (
-                        <p className="text-gray-500">No results yet</p>
-                    )}
+                    <p className="text-gray-500">No results yet</p>
+                )}
             </div>
             <Footer />
         </>

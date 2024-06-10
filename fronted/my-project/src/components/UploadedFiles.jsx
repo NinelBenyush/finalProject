@@ -2,9 +2,12 @@ import ProfileNavbar from "./ProfileNavbar";
 import Footer from "./Footer";
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
 function UploadedFiles() {
     const [files, setFiles] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const filesPerPage = 10; // Number of files per page
 
     useEffect(() => {
         async function fetchFiles() {
@@ -23,29 +26,92 @@ function UploadedFiles() {
         fetchFiles();
     }, []);
 
+    // Calculate pagination
+    const indexOfLastFile = currentPage * filesPerPage;
+    const indexOfFirstFile = indexOfLastFile - filesPerPage;
+    const currentFiles = files.slice(indexOfFirstFile, indexOfLastFile);
+    const totalPages = Math.ceil(files.length / filesPerPage);
+
     return (
         <>
             <ProfileNavbar />
             <div className="overflow-x-auto h-screen m-10">
                 <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>File name</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {files.map((file, index) => (
-                                <tr key={index}>
-                                    <th>{index + 1}</th>
-                                    <td>{file.filename}</td>
-                                    <td>{file.description}</td>
+                    <div className="w-full">
+                        <table className="table w-full">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>File name</th>
+                                    <th>Description</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {currentFiles.map((file, index) => (
+                                    <tr key={index}>
+                                        <th>{indexOfFirstFile + index + 1}</th>
+                                        <td>{file.filename}</td>
+                                        <td>{file.description}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                        <div className="flex flex-1 justify-between sm:hidden">
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            >
+                                Next
+                            </button>
+                        </div>
+                        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between w-full">
+                            <div>
+                                <p className="text-sm text-gray-700">
+                                    Showing <span className="font-medium">{indexOfFirstFile + 1}</span> to <span className="font-medium">{Math.min(indexOfLastFile, files.length)}</span> of{' '}
+                                    <span className="font-medium">{files.length}</span> results
+                                </p>
+                            </div>
+                            <div>
+                                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                                    >
+                                        <span className="sr-only">Previous</span>
+                                        <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                                    </button>
+                                    {[...Array(totalPages)].map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => setCurrentPage(index + 1)}
+                                            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${currentPage === index + 1 ? 'bg-emerald-600 text-white' : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'} focus:z-20 focus:outline-offset-0`}
+                                        >
+                                            {index + 1}
+                                        </button>
+                                    ))}
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                                    >
+                                        <span className="sr-only">Next</span>
+                                        <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <Footer />

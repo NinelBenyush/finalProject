@@ -25,7 +25,8 @@ mail = Mail(app)
 # Use the correct absolute path to the new database file
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/new_users.db'
 app.config['SQLALCHEMY_BINDS'] = {
-    'files_db': 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/uploaded_files.db'
+    'files_db': 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/uploaded_files.db',
+    'results_db': 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/results.db'
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress a warning
 db = SQLAlchemy(app)
@@ -55,13 +56,26 @@ class UploadFiles(db.Model):
         self.file_name = file_name
         self.description = description
 
+class Result(db.Model):
+    __bind_key__ = 'results_db' 
+    __tablename__ = 'results'
+    id = db.Column(db.Integer, primary_key=True)
+    fileName = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, fileName):
+        self.fileName = fileName
+
 @app.before_first_request
 def create_tables():
     db.create_all()
     with app.app_context():
-        bind_key = 'files_db'
-        query = text("CREATE TABLE IF NOT EXISTS file_details (id INTEGER NOT NULL, filename VARCHAR(200) NOT NULL, description VARCHAR(500) NOT NULL, PRIMARY KEY (id));")
-        db.session.execute(query)
+        bind_key_files = 'files_db'
+        query_files = text("CREATE TABLE IF NOT EXISTS file_details (id INTEGER NOT NULL, filename VARCHAR(200) NOT NULL, description VARCHAR(500) NOT NULL, PRIMARY KEY (id));")
+        db.session.execute(query_files)
+        
+        bind_key_results = 'results_db'
+        query_results = text("CREATE TABLE IF NOT EXISTS results (id INTEGER NOT NULL, fileName VARCHAR(100) NOT NULL, PRIMARY KEY (id));")
+        db.session.execute(query_results)
         db.session.commit()
         
 
@@ -303,14 +317,25 @@ def confirm_new_file():
     
 @app.route("/profile/files", methods=['GET'])
 def get_files():
-    print("Received request for /profile/files")
     files = UploadFiles.query.all()
-    print(f"Found {len(files)} files")
     file_list = [{"filename": file.file_name, "description": file.description} for file in files]
     response = {
         'status': 'success',
         'files': file_list
     }
+
+    return jsonify(response), 200
+
+
+@app.route("/profile/results", methods=['GET'])
+def get_result():
+    results = Result.query.all()
+    result_list =  [{"filename": file.fileName} for file in results]
+    response = {
+        'status':'success',
+        'results':result_list
+    }
+    
     return jsonify(response), 200
 
 
