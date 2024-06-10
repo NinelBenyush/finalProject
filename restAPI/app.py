@@ -300,6 +300,19 @@ def confirm_new_file():
             'message': 'Missing filename or description'
         }
         return jsonify(response), 400
+    
+@app.route("/profile/files", methods=['GET'])
+def get_files():
+    print("Received request for /profile/files")
+    files = UploadFiles.query.all()
+    print(f"Found {len(files)} files")
+    file_list = [{"filename": file.file_name, "description": file.description} for file in files]
+    response = {
+        'status': 'success',
+        'files': file_list
+    }
+    return jsonify(response), 200
+
 
 
 
