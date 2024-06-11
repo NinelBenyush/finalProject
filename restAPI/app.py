@@ -26,7 +26,8 @@ mail = Mail(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/new_users.db'
 app.config['SQLALCHEMY_BINDS'] = {
     'files_db': 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/uploaded_files.db',
-    'results_db': 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/results.db'
+    'results_db': 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/results.db',
+    'basicInfo_db':'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/basicInfo.db'
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress a warning
 db = SQLAlchemy(app)
@@ -66,6 +67,24 @@ class Result(db.Model):
     def __init__(self, fileName):
         self.fileName = fileName
 
+class BasicInfo(db.Model):
+    __bind_key__ = 'basicInfo_db' 
+    __tablename__ = 'basicInfo'
+    id = db.Column(db.Integer, primary_key=True)
+    firstName = db.Column(db.String(100), nullable=False)
+    lastName = db.Column(db.String(100), nullable=False)
+    companyName =  db.Column(db.String(100), nullable=False)
+    phoneNumber = db.Column(db.String(20), nullable=False, unique=True)
+    companyDescription = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, firstName, lastName, companyName, phoneNumber, companyDescription):
+        self.firstName = firstName
+        self.lastName = lastName
+        self.companyName = companyName
+        self.phoneNumber = phoneNumber
+        self.companyDescription = companyDescription
+        
+
 @app.before_first_request
 def create_tables():
     db.create_all()
@@ -77,6 +96,20 @@ def create_tables():
         bind_key_results = 'results_db'
         query_results = text("CREATE TABLE IF NOT EXISTS results (id INTEGER NOT NULL, fileName VARCHAR(100) NOT NULL, PRIMARY KEY (id));")
         db.session.execute(query_results)
+
+        bind_key_info = 'basicInfo_db'
+        query_info = text("""
+                    CREATE TABLE IF NOT EXISTS basicInfo (
+                    id INTEGER NOT NULL PRIMARY KEY,
+                    firstName VARCHAR(100) NOT NULL,
+                    lastName VARCHAR(100) NOT NULL,
+                    companyName VARCHAR(100) NOT NULL,
+                    phoneNumber VARCHAR(20) NOT NULL UNIQUE,
+                    companyDescription VARCHAR(100) NOT NULL
+                    );
+                """)
+        db.session.execute(query_info)
+
         db.session.commit()
         
 
@@ -226,6 +259,10 @@ def create_user(username, password, email):
     db.session.add(new_user)
     db.session.commit()
 
+def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription):
+    new_info = BasicInfo(fName, lName, cName, phoneNumber, cDescription)
+    db.session.add(new_info)
+    db.session.commit()
 
 @app.route("/upload-file", methods=['POST'])
 def handle_post():
@@ -348,7 +385,17 @@ def download_right_file(filename):
         return jsonify({"status": "error", "message": "File not found"}), 404
 
 
+@app.route("/basic-info", methods=['POST'])
+def handle_basic_info():
+    data = request.get_json()
+    fName = data['fName'].strip()
+    lName = data['lName'].strip()
+    cName = data['cName'].strip()
+    phoneNumber = data['phoneNumber'].strip()
+    cDescription = data['cDescription'].strip()
+    create_new_basic_info(fName, lName, cName, phoneNumber,cDescription)
 
+    return jsonify({"message": "basic info updated successfully"}), 201
 
 
 if __name__ == '__main__':
