@@ -113,9 +113,11 @@ const Sidebar = () => {
             </h1>
             <h2 className="text-md text-gray-400">Welcome back</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 p-4 gap-4">
-            <PersonalArea />
-            <UploadNewFile/>
-            </div>
+              <div className="flex flex-col w-full">
+               <PersonalArea />
+               <UploadNewFile />
+              </div>
+          </div>
           </div>
           
         </div>
