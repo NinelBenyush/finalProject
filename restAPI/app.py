@@ -4,7 +4,7 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pyexpat.errors import messages
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
@@ -32,6 +32,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress a warning
 db = SQLAlchemy(app)
 UPLOAD_FOLDER = "./UPLOAD_FOLDER"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+FILE_DIRECTORY = 'C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/DataForPrediction'
 
 class User(db.Model):
     __tablename__ = 'users'  # Ensure the table name matches
@@ -337,6 +338,14 @@ def get_result():
     }
     
     return jsonify(response), 200
+
+@app.route("/profile/results/<filename>.csv", methods=['GET'])
+def download_right_file(filename):
+    file_path = os.path.join(FILE_DIRECTORY, filename + '.csv')  # Append the extension to the file_path
+    if os.path.exists(file_path):
+        return send_from_directory(directory=FILE_DIRECTORY, path=filename + '.csv', as_attachment=True), 201
+    else:
+        return jsonify({"status": "error", "message": "File not found"}), 404
 
 
 
