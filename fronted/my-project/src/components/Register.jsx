@@ -3,6 +3,7 @@ import axios from 'axios';
 import MiniNavbar from "./MiniNabvar";
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
+import registerImg from "../assets/registerImg.svg";
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -59,8 +60,15 @@ function Register() {
     return (
       <div>
         <MiniNavbar/>
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-        <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="hidden lg:flex lg:w-1/2">
+          <img
+            src={registerImg}
+            alt="Placeholder Image"
+            className="object-cover mx-auto w-1/2 lg:w-2/3 md:w-3/4 h-auto"
+          />
+        </div>
+        <div className="p-8 rounded-md w-full max-w-md lg:max-w-none lg:w-1/2 lg:bg-transparent bg-white">
           <h1 className="text-2xl font-bold mb-6 flex items-center justify-center">
             Register
           </h1>
