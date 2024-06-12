@@ -6,6 +6,9 @@ import { IoLogInOutline } from "react-icons/io5";
 import { BsFillClipboard2DataFill } from "react-icons/bs";
 import UploadNewFile from './UploadNewFile';
 import PersonalArea from "./PersonalArea";
+import { IoMoonOutline } from "react-icons/io5";
+import { WiSunrise } from "react-icons/wi";
+import { IoSunnyOutline } from "react-icons/io5";
 
 
 const Sidebar = () => {
@@ -23,6 +26,17 @@ const Sidebar = () => {
    //   setUsername(JSON.parse(user).username);
   //  }
   //},[]);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      return <>Morning <WiSunrise  className="inline-block" /></>;
+    } else if (hour < 18) {
+      return <>Afternoon <IoSunnyOutline className="inline-block" /></>;
+    } else {
+      return <>Evening <IoMoonOutline className="inline-block" /></>;
+    }
+  };
 
   return (
     <div className="font-poppins antialiased">
@@ -109,7 +123,7 @@ const Sidebar = () => {
         <div className="flex flex-col w-full">
           <div className="overflow-auto h-screen pb-24 px-4 md:px-6">
             <h1 className="text-4xl font-semibold text-gray-800 dark:text-white">
-              Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}.
+              Good {getGreeting()}
             </h1>
             <h2 className="text-md text-gray-400">Welcome back</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 p-4 gap-4">

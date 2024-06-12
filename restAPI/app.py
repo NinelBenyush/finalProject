@@ -76,13 +76,15 @@ class BasicInfo(db.Model):
     companyName =  db.Column(db.String(100), nullable=False)
     phoneNumber = db.Column(db.String(20), nullable=False, unique=True)
     companyDescription = db.Column(db.String(100), nullable=False)
+    emailAddress = db.Column(db.String(100))
 
-    def __init__(self, firstName, lastName, companyName, phoneNumber, companyDescription):
+    def __init__(self, firstName, lastName, companyName, phoneNumber, companyDescription,emailAddress):
         self.firstName = firstName
         self.lastName = lastName
         self.companyName = companyName
         self.phoneNumber = phoneNumber
         self.companyDescription = companyDescription
+        self.emailAddress = emailAddress
         
 
 @app.before_first_request
@@ -105,7 +107,8 @@ def create_tables():
                     lastName VARCHAR(100) NOT NULL,
                     companyName VARCHAR(100) NOT NULL,
                     phoneNumber VARCHAR(20) NOT NULL UNIQUE,
-                    companyDescription VARCHAR(100) NOT NULL
+                    companyDescription VARCHAR(100) NOT NULL,
+                    emailAddress VARCHAR(100)
                     );
                 """)
         db.session.execute(query_info)
@@ -259,8 +262,8 @@ def create_user(username, password, email):
     db.session.add(new_user)
     db.session.commit()
 
-def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription):
-    new_info = BasicInfo(fName, lName, cName, phoneNumber, cDescription)
+def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription,emailAddress):
+    new_info = BasicInfo(fName, lName, cName, phoneNumber, cDescription,emailAddress)
     db.session.add(new_info)
     db.session.commit()
 
@@ -373,7 +376,8 @@ def showPersonalInfo():
             'lastName': info.lastName,
             'companyName': info.companyName,
             'phoneNumber': info.phoneNumber,
-            'companyDescription': info.companyDescription
+            'companyDescription': info.companyDescription,
+            'emailAddress': info.emailAddress
         }
         for info in infos
     ]
@@ -416,7 +420,8 @@ def handle_basic_info():
     cName = data['cName'].strip()
     phoneNumber = data['phoneNumber'].strip()
     cDescription = data['cDescription'].strip()
-    create_new_basic_info(fName, lName, cName, phoneNumber,cDescription)
+    email = data['email'].strip()
+    create_new_basic_info(fName, lName, cName, phoneNumber,cDescription,email)
 
     return jsonify({"message": "basic info updated successfully"}), 201
 

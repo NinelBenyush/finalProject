@@ -11,7 +11,7 @@ function PersonalArea(){
       try{
         const respone = await axios.get('http://localhost:5000/profile');
         if(respone.data.status === 'success'){
-          setInfo(respone.data.info[0]);
+          setInfo(respone.data.info[3]);
         }else{
           console.error('failed to fetch info', respone.data.message);
         }
@@ -39,7 +39,7 @@ function PersonalArea(){
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Email address</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">example@example.com</dd>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{info.emailAddress}</dd>
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Phone Number</dt>

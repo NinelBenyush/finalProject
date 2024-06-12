@@ -5,6 +5,7 @@ import { IoIosInformationCircleOutline } from "react-icons/io";
 import ProfileNavbar from "./ProfileNavbar";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Footer from './Footer';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -16,6 +17,7 @@ function DetailsAccount() {
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
   const [description, setDescription] = useState("");
+  const [ email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate()
@@ -23,7 +25,7 @@ function DetailsAccount() {
   const sendDetails = (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     setLoading(true);
-    const data = { fName, lName, cName: company, phoneNumber: phone, cDescription: description };
+    const data = { fName, lName, cName: company, phoneNumber: phone, cDescription: description ,email}
     axios.post('http://localhost:5000/basic-info', data)
       .then((res) => {
         setLoading(false);
@@ -41,7 +43,7 @@ function DetailsAccount() {
   };
 
   return (
-    <>
+   <div>
     <ProfileNavbar/>
         <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div
@@ -170,6 +172,19 @@ function DetailsAccount() {
                <span className="label-text">Click here</span>
             <input type="checkbox" defaultChecked className="checkbox checkbox-success" />
             </label>
+            <label htmlFor="email" className="block text-sm font-semibold leading-6 text-gray-900">
+              Email Adress
+            </label>
+            <div className="mt-2.5">
+              <input
+                type="text"
+                name="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm sm:leading-6"
+              />
+            </div>
           </div>
           </div>
 
@@ -190,7 +205,11 @@ function DetailsAccount() {
         </div>
       </form>
     </div>
-    </>
+
+    <Footer/>
+
+    </div>
+
   );
 }
 
