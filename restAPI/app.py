@@ -364,6 +364,29 @@ def get_files():
 
     return jsonify(response), 200
 
+@app.route("/profile", methods=['GET'])
+def showPersonalInfo():
+    infos = BasicInfo.query.all()
+    info_list = [
+        {
+            'firstName': info.firstName,
+            'lastName': info.lastName,
+            'companyName': info.companyName,
+            'phoneNumber': info.phoneNumber,
+            'companyDescription': info.companyDescription
+        }
+        for info in infos
+    ]
+    
+    response = {
+        'status': 'success',
+        'info': info_list
+    }
+    
+    return jsonify(response), 200
+
+
+
 
 @app.route("/profile/results", methods=['GET'])
 def get_result():
