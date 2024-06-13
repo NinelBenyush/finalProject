@@ -27,10 +27,20 @@ def work_on_file(filePath):
     df = pd.read_excel(filePath)
     location = os.path.join("./DataForPrediction", file_name)
     df.to_csv(location)
-    clean(df)
+    clean(df, onlyTheName, file_num)
 
 
-def clean(file):
+def clean(file, onlyTheName, file_num):
     relevantColumns = file[['code','color','Value','Inventory','January','February','March','April','May','June','July','August','September','October','November','December']]
     print(relevantColumns)
+   # file_name = f"{onlyTheName}_{file_num}.csv"
+   # new_path = os.path.join("./DataForPredictionAfterCleaning", file_name)
+   # relevantColumns.to_csv(new_path)
+   # print(f"Cleaned data saved to {new_path}")
+    hot_encoding = pd.get_dummies(relevantColumns[['color']])
+    encoded_df = pd.concat([relevantColumns, hot_encoding], axis=1)
+    encoded_df = encoded_df.drop(['color'], axis=1)
+    print(encoded_df)
+
+
   
