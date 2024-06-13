@@ -9,10 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
 from sqlalchemy import text
-
-
 import requests
-from file_processor import work_on_file
+from file_processor import work_on_file 
 from flask_mail import Mail, Message
 import smtplib
 import datetime
@@ -280,6 +278,7 @@ def handle_post():
         file.save(file_path)
 
         work_on_file(file_path)
+        
 
         return f'File {filename} uploaded successfully'
     return 'Bad Request', 400
