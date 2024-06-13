@@ -4,6 +4,7 @@ import MiniNavbar from "./MiniNabvar";
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import registerImg from "../assets/registerImg.svg";
+import { ImEye, ImEyeBlocked } from "react-icons/im";
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -14,6 +15,11 @@ function Register() {
   const [ message, setMessage] = useState('');
   const [emailError, setEmailError] = useState('');
   const navigate = useNavigate(); 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  }
 
   const validateEmail = (email) => {
     if (!email.includes('@')) {
@@ -134,28 +140,47 @@ function Register() {
           </div>
   
           <div className="mb-6 w-full">
-            <label className="flex items-center gap-2 w-full">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                className="w-4 h-4 opacity-70"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
-                value = {password}
-                onChange= {(e) => setPassword(e.target.value)}
-              />
-            </label>
-          </div>
+        <label className="flex items-center gap-2 w-full">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            className="w-4 h-4 opacity-70"
+          >
+            <path
+              fillRule="evenodd"
+              d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-6 h-6"
+            >
+              {showPassword ? <ImEye /> : <ImEyeBlocked />}
+              
+            </svg>
+          </button>
+        </label>
+      </div>
 
           <div className="mb-6 w-full">
             <label className="flex items-center gap-2 w-full">
