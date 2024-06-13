@@ -22,12 +22,28 @@ function Register() {
       setEmailError('');
     }
   };
+
+  const validatePassword = (password) => {
+    const containsUppercase = /[A-Z]/.test(password);
+    const containNumber = /[0-9]/.test(password);
+    const minLength = password.length >=8;
+    return containsUppercase && containNumber && minLength;
+
+  }
+
   
   const sendRegister = () => {
     if(password!== confirmPassword){
       setMessage("passwords dont match")
       return;
     }
+
+    const isPasswordValid = validatePassword(password);
+    if (!isPasswordValid) {
+      setMessage("Password must contain at least one uppercase letter, one number, and be at least 8 characters long.");
+      return;
+    }
+
     if (!email.includes('@')) {
       setMessage('Email is not valid.');
       return;

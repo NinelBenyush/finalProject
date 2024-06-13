@@ -9,6 +9,7 @@ import PersonalArea from "./PersonalArea";
 import { IoMoonOutline } from "react-icons/io5";
 import { WiSunrise } from "react-icons/wi";
 import { IoSunnyOutline } from "react-icons/io5";
+import TimeLine from './TimeLine';
 
 
 const Sidebar = () => {
@@ -128,8 +129,16 @@ const Sidebar = () => {
             <h2 className="text-md text-gray-400">Welcome back</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 p-4 gap-4">
               <div className="flex flex-col w-full">
-               <PersonalArea />
-               <UploadNewFile />
+              <div className="w-full">
+                <PersonalArea />
+              </div>
+              <div className="w-full">
+                <UploadNewFile />
+              </div>
+              </div>
+            <div className="flex flex-col w-full">
+              <TimeLine />
+
               </div>
           </div>
           </div>
