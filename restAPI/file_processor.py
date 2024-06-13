@@ -51,12 +51,7 @@ def clean(file, onlyTheName, file_num):
 
     rColumns = rColumns.apply(lambda x: np.where(x < 0, 0, x))
 
-    print(rColumns)
-
-    file_name = f"{onlyTheName}_{file_num}.csv"
-    new_path = os.path.join("./DataForPredictionAfterCleaning", file_name)
-    rColumns.to_csv(new_path)
-    print(f"Cleaned data saved to {new_path}")
+    #print(rColumns)
 
     months = ['January','February','March','April','May','June','July','August','September','October','November','December']
     rColumns[months] = rColumns[months].apply(pd.to_numeric, errors='coerce')
@@ -91,12 +86,24 @@ def clean(file, onlyTheName, file_num):
     df_rest_columns = rColumns.drop(columns=selected)
 
     merged_df = pd.merge(df_rest_columns, temp_df, on='code' )
-    print(merged_df)
+    #print(merged_df)
 
     name_to_change = {'Value_x':'Inventory Value', 'Value_y': "Value "}
     merged_df.rename(columns=name_to_change,inplace=True)
+    
+    month_map_reverse = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6,
+                     'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12}
+    merged_df['Month'] = merged_df['Month'].map(month_map_reverse)
 
-    print(merged_df)
+    merged_df['Year'] =2023 #we will get the year from the filename later
+    merged_df['Date']= pd.to_datetime(merged_df['Month'].astype(str) + ' ' + merged_df['Year'].astype(str), format='%m %Y')
+    merged_df.set_index('Date', inplace=True)
+
+
+    file_name = f"{onlyTheName}_{file_num}.csv"
+    new_path = os.path.join("./DataForPredictionAfterCleaning", file_name)
+    merged_df.to_csv(new_path)
+    print(f"Cleaned data saved to {new_path}")
 
 
 
