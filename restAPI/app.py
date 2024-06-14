@@ -15,8 +15,11 @@ from flask_mail import Mail, Message
 import smtplib
 import datetime
 
+
+
 app = Flask(__name__)
 CORS(app)
+
 
 mail = Mail(app)
 
@@ -212,6 +215,31 @@ def send_predictions(file_path):
         print(f"Error sending email: {e}")
 
 
+def send_email_for_upload(filename):
+    me = "orderboost2024@gmail.com"
+    email = "forpracticepython2023@gmail.com"
+    dest = email
+
+    msg = MIMEMultipart()
+    msg['from'] = me
+    msg['To'] = dest
+    msg['Subject'] = f'You upload the file {filename} succesfully'
+
+    body = "We have received your file, and you will soon receive the results you are waiting for."
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as s:
+            s.starttls()
+            s.login(me, "nizs kjcb niwc debn")
+            s.sendmail(me, dest, msg.as_string())
+            s.quit()
+            print("email send succesfully")
+    except Exception as e:
+        print(f"error {e}")
+
+
+
 #@app.route('/', methods=['GET'])
 
 
@@ -274,8 +302,10 @@ def handle_post():
             return 'No file selected', 400
 
         filename = file.filename
+        send_email_for_upload(filename=filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
+
 
         work_on_file(file_path)
         

@@ -1,5 +1,6 @@
 import React from "react";
 
+
 function Messages(){
     return (
         <>
@@ -89,7 +90,6 @@ function Messages(){
     
          
         </ul>
-        {/*<!-- End Activity feed --> */}
       </>
     )
 }

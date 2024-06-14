@@ -18,6 +18,8 @@ import Results from "./components/Results";
 import UploadNewFile from "./components/UploadNewFile";
 import UploadedFiles from "./components/UploadedFiles";
 import Messages from "./components/Messages";
+import ResultsExplanation from "./components/ResultsExplanation";
+
 
 
 const router = createBrowserRouter([
@@ -68,6 +70,10 @@ const router = createBrowserRouter([
   {
     path:"/profile/messages",
     element: <Messages />
+  },
+  {
+    path:"/check",
+    element :<ResultsExplanation />
   }
   
 
