@@ -29,15 +29,15 @@ function ResultsExplanation() {
 
               <dd className="mt-2 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 flex items-center">
                 <div className="flex flex-col">
-                  <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                  <div className="overflow-x-auto pl-4 sm:-mx-6 lg:-mx-8 ">
                     <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                       <div className="overflow-hidden">
-                        <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
+                        <table className="min-w-full text-center text-sm font-light text-surface dark:text-white lg:block">
                           <thead className="border-b border-neutral-200 bg-neutral-50 font-medium dark:border-white/10 dark:text-neutral-800">
                             <tr>
-                              <th scope="col" className="px-6 py-4"></th>
-                              <th scope="col" className="px-6 py-4 border-b border-success-200 bg-success-100 text-neutral-800">Product1</th>
-                              <th scope="col" className="px-6 py-4 border-b border-success-200 bg-success-100 text-neutral-800">Product2</th>
+                              <th scope="col" className="  bg-green-100 px-6 py-4 "></th>
+                              <th scope="col" className="px-6 py-4 border-b border-success-200 bg-green-100 text-neutral-800">Product1</th>
+                              <th scope="col" className="px-6 py-4 border-b border-success-200 bg-green-100 text-neutral-800">Product2</th>
                             </tr>
                           </thead>
                           <tbody>

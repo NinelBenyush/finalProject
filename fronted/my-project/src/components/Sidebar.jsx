@@ -10,6 +10,7 @@ import { IoMoonOutline } from "react-icons/io5";
 import { WiSunrise } from "react-icons/wi";
 import { IoSunnyOutline } from "react-icons/io5";
 import TimeLine from './TimeLine';
+import ResultsExplanation from './ResultsExplanation';
 
 
 const Sidebar = () => {
@@ -138,8 +139,11 @@ const Sidebar = () => {
               </div>
             <div className="flex flex-col w-full">
               <TimeLine />
-
               </div>
+              <div className="flex flex-col w-full grid-cols-4">
+              <ResultsExplanation/>
+              </div>
+
           </div>
           </div>
           
