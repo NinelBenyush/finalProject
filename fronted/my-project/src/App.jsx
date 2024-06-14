@@ -17,7 +17,7 @@ import Updates from "./components/Updates";
 import Results from "./components/Results";
 import UploadNewFile from "./components/UploadNewFile";
 import UploadedFiles from "./components/UploadedFiles";
-
+import Messages from "./components/Messages";
 
 
 const router = createBrowserRouter([
@@ -64,6 +64,10 @@ const router = createBrowserRouter([
   {
     path:"/profile/Files",
     element: <UploadedFiles />
+  },
+  {
+    path:"/profile/messages",
+    element: <Messages />
   }
   
 

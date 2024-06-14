@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { links,profileLinks,handleFile,account } from "../data";
+import { links,profileLinks,handleFile,account,message } from "../data";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdAccountCircle } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
@@ -16,6 +16,7 @@ function ProfileNavbar(){
     const filteredLinks = links.filter((link) => link.text !== 'Log in');
     const upload = handleFile.filter((link) => link.text !== 'download file');
     const download =  handleFile.filter((link) => link.text !== 'upload file');
+    const m = message.filter((link)=> link.text=="Messages" );
     
     return (
         <nav className="bg-emerald-100">
@@ -85,9 +86,14 @@ function ProfileNavbar(){
 
 
   <li>
-    <a className="tooltip" data-tip="Messages">
-    <FiMessageSquare className="h-5 w-5" />
-    </a>
+    {m.map((link) => {
+      const {id, href, text} = link;
+      return (
+        <a key={id} href={href} className='tooltip' data-tip="Messages">
+          <FiMessageSquare className="h-5 w-5" />
+        </a>
+      )
+    })}
   </li>
 </ul>
  </div>

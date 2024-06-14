@@ -35,6 +35,10 @@ export const account = [
   {id:nanoid(), href:"/profile",text:"account"},
 ]
 
+export const message =  [
+  {id:nanoid(), href:"/profile/messages", text:"Messages"}
+]
+
 export const start = [
   {
     id: nanoid(),
