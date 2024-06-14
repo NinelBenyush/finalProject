@@ -296,6 +296,7 @@ def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription,emailAd
     db.session.add(new_info)
     db.session.commit()
 
+uploaded_files = []
 @app.route("/upload-file", methods=['POST'])
 def handle_post():
     global latest_upload_response
@@ -308,28 +309,29 @@ def handle_post():
         send_email_for_upload(filename=filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
-        upload_time = datetime.datetime.now().strftime('%Y-%m-%d')
+        upload_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         #print(upload_time)
 
         work_on_file(file_path)
+        uploaded_files.append({'fileName': filename, 'upload_time': upload_time})
 
-        latest_upload_response = {
+        response = {
             'message ':"File uploaded successfully",
             'another_m' :f'File {filename} uploaded successfully',
             'file_name' : filename,
             'upload_time': upload_time,
         }
 
-        return jsonify(latest_upload_response)
+        return jsonify(response)
     return 'Bad Request', 400
 
-@app.route("/latest-upload", methods=['GET'])
+@app.route("/uploaded-files", methods=['GET'])
 def get_latest_upload():
-    global latest_upload_response
-    if latest_upload_response:
-        return jsonify(latest_upload_response)
-    else:
-        return 'No uploads found', 404
+    response = {
+        'status': 'success',
+        'results': uploaded_files
+    }
+    return jsonify(response), 200
 
 
 @app.route("/register", methods=['POST'])
