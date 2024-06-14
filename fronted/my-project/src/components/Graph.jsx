@@ -26,7 +26,7 @@ function Graph(){
 
     return (
         <div className="max-w-lg mx-auto py-10">
-        <div className="shadow p-6 rounded-lg bg-white">
+        <div className=" p-6 rounded-lg">
             <div className="md:flex md:justify-between md:items-center">
                 <div>
                     <h2 className="text-xl text-gray-800 font-bold leading-tight">Inventory Prediction</h2>

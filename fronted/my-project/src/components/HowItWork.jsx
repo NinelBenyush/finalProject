@@ -1,5 +1,6 @@
 import SectionTitle from "./SectionTitle";
 import OnePieChart from "./OnePieChart";
+import Graph from "./Graph";
 
 function HowItWork(){
     return (
@@ -15,8 +16,11 @@ function HowItWork(){
                 <p className="py-6 align-element grid md:grid-cols-2 items-center gap-16">
                 From the file you are uploading, the data will be divided into groups of sequences, with each sequence comprising 3 months.
                 </p>
-
             </div>
+
+            <article className=" align-element grid md:grid-cols-2 items-center gap-16">
+                    <Graph/>
+                </article>
 
         </section>
         </>
