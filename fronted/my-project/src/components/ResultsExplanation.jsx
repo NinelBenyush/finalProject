@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react';
+import React,{useEffect}  from 'react';
 import { TbFileInfo } from "react-icons/tb";
 import resultsE from "../assets/resultsE.png";
 
 function ResultsExplanation() {
+    useEffect(() => {
+        const textElement = document.querySelector('.text-with-line-breaks');
+        if (textElement) {
+          const text = textElement.innerHTML;
+          const newText = text.replace(/\./g, '.<br />');
+          textElement.innerHTML = newText;
+        }
+      }, []);
 
-  useEffect(() => {
-    const textElement = document.querySelector('.text-with-line-breaks');
-    const text = textElement.innerHTML;
-    const newText = text.replace(/\./g, '.<br />');
-    textElement.innerHTML = newText;
-  }, []);
 
   return (
     <div className='m-10'>
@@ -23,12 +25,13 @@ function ResultsExplanation() {
           <dl className="divide-y divide-gray-100">
 
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm leading-6 text-gray-900 text-with-line-breaks">
+              <p className="text-sm leading-6 w-full text-gray-900 text-with-line-breaks sm:col-span-3">
                 You will receive the results in an Excel file. The columns will display your products, with each row representing the upcoming months. The values inside the rows will indicate the inventory that you will need to order for each product per month.
-              </dt>
+              </p>
+            </div>
 
-              <dd className="mt-2 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 flex items-center">
-                <div className="flex flex-col">
+
+            <div className="flex flex-col">
                   <div className="overflow-x-auto pl-4 sm:-mx-6 lg:-mx-8 ">
                     <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                       <div className="overflow-hidden">
@@ -62,8 +65,6 @@ function ResultsExplanation() {
                     </div>
                   </div>
                 </div>
-              </dd>
-            </div>
 
           </dl>
         </div>

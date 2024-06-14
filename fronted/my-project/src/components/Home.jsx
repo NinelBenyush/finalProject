@@ -3,6 +3,7 @@ import Hero from "./Hero";
 import Start from "./Start";
 import About from "./About";
 import Footer from "./Footer";
+import HowItWork from "./HowItWork";
 
 
 function Home(){
@@ -12,6 +13,7 @@ function Home(){
         <Hero />
         <Start />
         <About />
+        <HowItWork />
         <Footer/>
         </>
     )

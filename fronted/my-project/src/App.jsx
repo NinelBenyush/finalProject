@@ -18,9 +18,7 @@ import Results from "./components/Results";
 import UploadNewFile from "./components/UploadNewFile";
 import UploadedFiles from "./components/UploadedFiles";
 import Messages from "./components/Messages";
-import ResultsExplanation from "./components/ResultsExplanation";
-
-
+import Graph from "./components/Graph";
 
 const router = createBrowserRouter([
   {
@@ -73,7 +71,7 @@ const router = createBrowserRouter([
   },
   {
     path:"/check",
-    element :<ResultsExplanation />
+    element :<Graph />
   }
   
 
