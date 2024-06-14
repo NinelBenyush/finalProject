@@ -6,7 +6,7 @@ import Footer from "./Footer";
 import { useNavigate } from 'react-router-dom';
 import {Link} from 'react-router-dom';
 import loginImg from "../assets/loginImg.svg";
-
+import { ImEye, ImEyeBlocked } from "react-icons/im";
 
 
 const Login = () => {
@@ -15,6 +15,11 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  }
   
   const sendLogin = () => {
     setLoading(true);
@@ -89,12 +94,31 @@ const Login = () => {
                 />
               </svg>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 className="w-full border-2 border-gray-300 rounded-md p-2 focus:border-green-500"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+                        <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-6 h-6"
+            >
+              {showPassword ? <ImEye /> : <ImEyeBlocked />}
+              
+            </svg>
+          </button>
             </label>
           </div>
   
