@@ -298,6 +298,7 @@ def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription,emailAd
 
 @app.route("/upload-file", methods=['POST'])
 def handle_post():
+    global latest_upload_response
     if 'file' in request.files:
         file = request.files['file']
         if file.filename == '':
@@ -312,8 +313,23 @@ def handle_post():
 
         work_on_file(file_path)
 
-        return f'File {filename} uploaded successfully'
+        latest_upload_response = {
+            'message ':"File uploaded successfully",
+            'another_m' :f'File {filename} uploaded successfully',
+            'file_name' : filename,
+            'upload_time': upload_time,
+        }
+
+        return jsonify(latest_upload_response)
     return 'Bad Request', 400
+
+@app.route("/latest-upload", methods=['GET'])
+def get_latest_upload():
+    global latest_upload_response
+    if latest_upload_response:
+        return jsonify(latest_upload_response)
+    else:
+        return 'No uploads found', 404
 
 
 @app.route("/register", methods=['POST'])
