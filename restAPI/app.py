@@ -17,6 +17,7 @@ import datetime
 
 
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -64,9 +65,11 @@ class Result(db.Model):
     __tablename__ = 'results'
     id = db.Column(db.Integer, primary_key=True)
     fileName = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.DateTime) 
 
-    def __init__(self, fileName):
+    def __init__(self, fileName, date):
         self.fileName = fileName
+        self.date = date
 
 class BasicInfo(db.Model):
     __bind_key__ = 'basicInfo_db' 
@@ -97,7 +100,7 @@ def create_tables():
         db.session.execute(query_files)
         
         bind_key_results = 'results_db'
-        query_results = text("CREATE TABLE IF NOT EXISTS results (id INTEGER NOT NULL, fileName VARCHAR(100) NOT NULL, PRIMARY KEY (id));")
+        query_results = text("CREATE TABLE IF NOT EXISTS results (id INTEGER NOT NULL, fileName VARCHAR(100) NOT NULL,date DATETIME, PRIMARY KEY (id));")
         db.session.execute(query_results)
 
         bind_key_info = 'basicInfo_db'
@@ -296,7 +299,6 @@ def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription,emailAd
 @app.route("/upload-file", methods=['POST'])
 def handle_post():
     if 'file' in request.files:
-        # Handle file upload
         file = request.files['file']
         if file.filename == '':
             return 'No file selected', 400
@@ -305,10 +307,10 @@ def handle_post():
         send_email_for_upload(filename=filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
-
+        upload_time = datetime.datetime.now().strftime('%Y-%m-%d')
+        #print(upload_time)
 
         work_on_file(file_path)
-        
 
         return f'File {filename} uploaded successfully'
     return 'Bad Request', 400
@@ -356,6 +358,7 @@ def download_file():
         if not os.path.isfile(file_path):
             app.logger.error(f"File not found: {file_path}")
             return f"File not found: {file_path}", 404
+        download_time = datetime.datetime.now().strftime('%Y-%m-%d')
         send_predictions(file_path)
         return send_file(file_path, as_attachment=True, mimetype='text/csv')
     except Exception as e:
@@ -424,7 +427,7 @@ def showPersonalInfo():
 @app.route("/profile/results", methods=['GET'])
 def get_result():
     results = Result.query.all()
-    result_list =  [{"filename": file.fileName} for file in results]
+    result_list =  [{"filename": file.fileName, 'date':file.date} for file in results]
     response = {
         'status':'success',
         'results':result_list
