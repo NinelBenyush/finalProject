@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ProfileNavbar from "./ProfileNavbar";
+import Footer from "./Footer";
 
 function Messages() {
     const [messages, setMessages] = useState([]);
@@ -135,13 +137,22 @@ function Messages() {
     };
 
     return (
+        <>
+        <ProfileNavbar/>
+        <div className="flex justify-center items-center  bg-gray-100">
+        <div className="bg-slate-100 p-8 rounded-lg s w-full max-w-4xl">
+        <h3 className="text-left text-2xl font-bold mb-4">Messages</h3>
         <ul
             aria-label="Activity feed"
             role="feed"
-            className="relative flex flex-col gap-12 py-12 pl-6 before:absolute before:top-0 before:left-6 before:h-full before:-translate-x-1/2 before:border before:border-dashed before:border-slate-200 after:absolute after:top-6 after:left-6 after:bottom-6 after:-translate-x-1/2 after:border after:border-slate-200 "
+            className="relative flex  flex-col gap-12 py-12 pl-6 before:absolute before:top-0 before:left-6 before:h-full before:-translate-x-1/2 before:border before:border-dashed before:border-slate-200 after:absolute after:top-6 after:left-6 after:bottom-6 after:-translate-x-1/2 after:border after:border-slate-200 "
         >
             {messages.map((message, index) => renderMessage(message, index))}
         </ul>
+        </div>
+        </div>
+        <Footer />
+        </>
     );
 }
 
