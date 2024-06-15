@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+from algo import send_for_alg
 
 counter_file = "count_for_data.txt"
 
@@ -104,6 +105,8 @@ def clean(file, onlyTheName, file_num):
     new_path = os.path.join("./DataForPredictionAfterCleaning", file_name)
     merged_df.to_csv(new_path)
     print(f"Cleaned data saved to {new_path}")
+
+    send_for_alg(new_path)
 
 
 
