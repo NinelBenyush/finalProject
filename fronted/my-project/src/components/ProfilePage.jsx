@@ -3,20 +3,38 @@ import ProfileNavbar from "./ProfileNavbar";
 import Footer from "./Footer";
 import profileImg from "../assets/profileImg.png";
 import Sidebar from "./Sidebar";
+import axios from "axios";
 
 function ProfilePage() {
   const [showResAlert, setShowResAlert] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/get-res")
-      .then((response) => response.json())
-      .then((data) => {
-        setMessage(data.message);
-        setShowResAlert(true);
-      })
-      .catch((error) => console.error("Error:", error));
+    async function fetchRes() {
+      try {
+        const response = await axios.get("http://localhost:5000/get-res");
+        const m = response.data.message;
+        const lastAlertTime = localStorage.getItem("lastAlertTime");
+        const currentTime = new Date().getTime();
+
+        if (
+          m === "You got the results, check in the results section" &&
+          (!lastAlertTime || currentTime - parseInt(lastAlertTime) > 60000)
+        ) {
+          setMessage(m);
+          setShowResAlert(true);
+          localStorage.setItem("lastAlertTime", currentTime.toString());
+        }
+      } catch (error) {
+        console.error("error ", error);
+      }
+    }
+    fetchRes();
   }, []);
+
+  const handleCloseAlert = () => {
+    setShowResAlert(false);
+  };
 
   return (
     <>
@@ -30,7 +48,7 @@ function ProfilePage() {
             <p>{message}</p>
             <button
               className="mt-4 bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() => setShowResAlert(false)}
+              onClick={handleCloseAlert}
             >
               Close
             </button>
