@@ -383,6 +383,7 @@ def get_welcome():
     }
     return jsonify(response), 200
 
+
 @app.route("/download-file", methods=['GET'])
 def download_file():
     try:
@@ -455,7 +456,7 @@ def showPersonalInfo():
 
 
 
-
+downloaded_files = []
 @app.route("/profile/results", methods=['GET'])
 def get_result():
     results = Result.query.all()
@@ -467,14 +468,24 @@ def get_result():
     
     return jsonify(response), 200
 
+
 @app.route("/profile/results/<filename>.csv", methods=['GET'])
 def download_right_file(filename):
     file_path = os.path.join(FILE_DIRECTORY, filename + '.csv')  # Append the extension to the file_path
     if os.path.exists(file_path):
+        download_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        downloaded_files.append({'filename': filename, 'download_time': download_time})
         return send_from_directory(directory=FILE_DIRECTORY, path=filename + '.csv', as_attachment=True), 201
     else:
         return jsonify({"status": "error", "message": "File not found"}), 404
 
+@app.route("/getDownload", methods=['GET'])
+def getDInfo():
+    response = {
+        'status':'success',
+        'results':downloaded_files,
+    }
+    return jsonify(response),200
 
 @app.route("/basic-info", methods=['POST'])
 def handle_basic_info():
