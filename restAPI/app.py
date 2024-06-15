@@ -231,6 +231,11 @@ def send_email_for_upload(filename):
     body = "We have received your file, and you will soon receive the results you are waiting for."
     msg.attach(MIMEText(body, 'plain'))
 
+    img_path = "upload.png"
+    with open(img_path, "rb") as image_file:
+        image = MIMEImage(image_file.read(), name=os.path.basename(img_path))
+        msg.attach(image)
+
     try:
         with smtplib.SMTP('smtp.gmail.com', 587) as s:
             s.starttls()

@@ -11,17 +11,12 @@ function Messages() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const [uploadedFilesRes, loginRes, downloadRes, getRes] = await Promise.all([
+                const [uploadedFilesRes, loginRes, downloadRes] = await Promise.all([
                     axios.get('http://localhost:5000/uploaded-files'),
                     axios.get('http://localhost:5000/get-login'),
-                    axios.get('http://localhost:5000/getDownload'),
-                    axios.get('http://localhost:5000/get-res')
+                    axios.get('http://localhost:5000/getDownload')
                 ]);
 
-                if (!uploadedFilesRes.data.results || !loginRes.data.results || !downloadRes.data.results || !getRes.data.results) {
-                    console.error("Error: One or more API responses do not contain the expected 'results' property.");
-                    return;
-                }
 
                 const uploadedFiles = uploadedFilesRes.data.results.map(file => ({
                     ...file,
@@ -41,19 +36,9 @@ function Messages() {
                     time: dFile.download_time
                 }));
 
-                const getResult = getRes.data.results.map(result => ({
-                    ...result,
-                    type: 'getResult',
-                    time: result.res_time
-                }));
 
-                const combinedMessages = [...uploadedFiles, ...greetings, ...downloads,...getResult];
+                const combinedMessages = [...uploadedFiles, ...greetings, ...downloads];
                 combinedMessages.sort((a, b) => new Date(b.time) - new Date(a.time));
-
-                console.log('uploadedFilesRes:', uploadedFilesRes.data);
-                console.log('loginRes:', loginRes.data);
-                console.log('downloadRes:', downloadRes.data);
-                console.log('getRes:', getRes.data);
 
                 setMessages(combinedMessages);
             } catch (error) {
