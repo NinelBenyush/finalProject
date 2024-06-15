@@ -11,11 +11,17 @@ function Messages() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const [uploadedFilesRes, loginRes, downloadRes] = await Promise.all([
+                const [uploadedFilesRes, loginRes, downloadRes, getRes] = await Promise.all([
                     axios.get('http://localhost:5000/uploaded-files'),
                     axios.get('http://localhost:5000/get-login'),
-                    axios.get('http://localhost:5000/getDownload')
+                    axios.get('http://localhost:5000/getDownload'),
+                    axios.get('http://localhost:5000/get-res')
                 ]);
+
+                if (!uploadedFilesRes.data.results || !loginRes.data.results || !downloadRes.data.results || !getRes.data.results) {
+                    console.error("Error: One or more API responses do not contain the expected 'results' property.");
+                    return;
+                }
 
                 const uploadedFiles = uploadedFilesRes.data.results.map(file => ({
                     ...file,
@@ -35,8 +41,19 @@ function Messages() {
                     time: dFile.download_time
                 }));
 
-                const combinedMessages = [...uploadedFiles, ...greetings, ...downloads];
+                const getResult = getRes.data.results.map(result => ({
+                    ...result,
+                    type: 'getResult',
+                    time: result.res_time
+                }));
+
+                const combinedMessages = [...uploadedFiles, ...greetings, ...downloads,...getResult];
                 combinedMessages.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+                console.log('uploadedFilesRes:', uploadedFilesRes.data);
+                console.log('loginRes:', loginRes.data);
+                console.log('downloadRes:', downloadRes.data);
+                console.log('getRes:', getRes.data);
 
                 setMessages(combinedMessages);
             } catch (error) {
@@ -143,6 +160,34 @@ function Messages() {
                         </div>
                     </li>
                 );
+                case 'getResult':
+                    return (
+                        <li role="article" key={index} className="relative pl-6">
+                        <span className="absolute left-0 z-10 flex items-center justify-center w-8 h-8 -translate-x-1/2 rounded-full bg-slate-200 text-slate-700 ring-2 ring-white ">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-4 h-4"
+                                role="presentation"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
+                                />
+                            </svg>
+                        </span>
+                        <div className="flex flex-col flex-1 gap-0">
+                            <h4 className="text-sm font-medium text-slate-700">
+                                You got a new result file: {message.name}
+                            </h4>
+                            <p className="text-xs text-slate-500">{message.res_time}</p>
+                        </div>
+                        </li>
+                    );
             default:
                 return null;
         }
