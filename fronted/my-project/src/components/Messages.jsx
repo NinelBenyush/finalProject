@@ -160,7 +160,7 @@ function Messages() {
                         </div>
                     </li>
                 );
-                case 'getResult':
+              /*  case 'getResult':
                     return (
                         <li role="article" key={index} className="relative pl-6">
                         <span className="absolute left-0 z-10 flex items-center justify-center w-8 h-8 -translate-x-1/2 rounded-full bg-slate-200 text-slate-700 ring-2 ring-white ">
@@ -187,7 +187,7 @@ function Messages() {
                             <p className="text-xs text-slate-500">{message.res_time}</p>
                         </div>
                         </li>
-                    );
+                    ); */
             default:
                 return null;
         }

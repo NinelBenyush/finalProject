@@ -333,13 +333,11 @@ def get_res():
     global latest_res
     res_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     response = {
-        "results": [
-            {
+            
                 "message": latest_res.get("final_m", ""),
                 "name": latest_res.get("file_name", ""),
-                "res_time": latest_res.get("res_time", "")
-            }
-        ]
+                "res_time": res_time
+            
     }
     return jsonify(response)
 
