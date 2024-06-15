@@ -331,8 +331,7 @@ def handle_post():
 @app.route("/get-res", methods=['GET'])
 def get_res():
      global latest_res
-     return jsonify({"message": latest_res.get("final_m", "")})
-    
+     return jsonify({"message": latest_res.get("final_m", "")}) 
 
 
 @app.route("/uploaded-files", methods=['GET'])
