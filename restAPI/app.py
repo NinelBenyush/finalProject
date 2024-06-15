@@ -297,9 +297,10 @@ def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription,emailAd
     db.session.commit()
 
 uploaded_files = []
+latest_res = {}
 @app.route("/upload-file", methods=['POST'])
 def handle_post():
-    global latest_upload_response
+    global latest_res 
     if 'file' in request.files:
         file = request.files['file']
         if file.filename == '':
@@ -316,14 +317,23 @@ def handle_post():
         uploaded_files.append({'fileName': filename, 'upload_time': upload_time})
 
         response = {
-            'message ':"File uploaded successfully",
+            'message ':"File uploaded  successfully",
             'another_m' :f'File {filename} uploaded successfully',
             'file_name' : filename,
             'upload_time': upload_time,
+            "final_m" : "You got the results, check in the results section",
         }
+        latest_res = response
 
         return jsonify(response)
     return 'Bad Request', 400
+
+@app.route("/get-res", methods=['GET'])
+def get_res():
+     global latest_res
+     return jsonify({"message": latest_res.get("final_m", "")})
+    
+
 
 @app.route("/uploaded-files", methods=['GET'])
 def get_latest_upload():
