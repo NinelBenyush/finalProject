@@ -5,6 +5,8 @@ import Footer from "./Footer";
 
 function Messages() {
     const [messages, setMessages] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const messagesPerPage = 5;
 
     useEffect(() => {
         async function fetchData() {
@@ -44,6 +46,16 @@ function Messages() {
 
         fetchData();
     }, []);
+
+    const indexOfLastMessage = currentPage * messagesPerPage;
+    const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
+    const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
+
+    // Calculate page numbers
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(messages.length / messagesPerPage); i++) {
+        pageNumbers.push(i);
+    }
 
     const renderMessage = (message, index) => {
         switch (message.type) {
@@ -139,20 +151,59 @@ function Messages() {
     return (
         <>
         <ProfileNavbar/>
-        <div className="flex justify-center items-center  bg-gray-100">
-        <div className="bg-slate-100 p-8 rounded-lg s w-full max-w-4xl">
+        <div className="flex justify-center items-center   bg-gray-100">
+        <div className="bg-slate-100 h-screen p-8 rounded-lg s w-full max-w-4xl">
         <h3 className="text-left text-2xl font-bold mb-4">Messages</h3>
         <ul
             aria-label="Activity feed"
             role="feed"
             className="relative flex  flex-col gap-12 py-12 pl-6 before:absolute before:top-0 before:left-6 before:h-full before:-translate-x-1/2 before:border before:border-dashed before:border-slate-200 after:absolute after:top-6 after:left-6 after:bottom-6 after:-translate-x-1/2 after:border after:border-slate-200 "
         >
-            {messages.map((message, index) => renderMessage(message, index))}
+           {currentMessages.map((message, index) => renderMessage(message, index))}
         </ul>
+        <nav className="flex items-center gap-x-1">
+                    <button
+                        type="button"
+                        className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-2 text-sm rounded-lg border border-transparent text-gray-800 hover:bg-emerald-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-transparent dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        <svg className="flex-shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m15 18-6-6 6-6"></path>
+                        </svg>
+                        <span aria-hidden="true" className="sr-only">Previous</span>
+                    </button>
+                    <div className="flex items-center gap-x-1">
+                        {pageNumbers.map(number => (
+                            <button
+                                key={number}
+                                type="button"
+                                className={`min-h-[38px] min-w-[38px] flex justify-center items-center border ${currentPage === number ? 'border-gray-200' : 'border-transparent'} text-gray-800 hover:bg-emerald-50 py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:focus:bg-white/10`}
+                                onClick={() => setCurrentPage(number)}
+                            >
+                                {number}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        type="button"
+                        className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-2 text-sm rounded-lg border border-transparent text-gray-800 hover:bg-emerald-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-transparent dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === pageNumbers.length}
+                    >
+                        <span aria-hidden="true" className="sr-only">Next</span>
+                        <svg className="flex-shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m9 18 6-6-6-6"></path>
+                        </svg>
+                    </button>
+                </nav>
+
         </div>
         </div>
         <Footer />
+
         </>
+        
     );
 }
 
