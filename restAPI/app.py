@@ -354,7 +354,7 @@ def handle_register():
 
         return jsonify({"message": "User registered successfully"}), 201
 
-
+login_info = []
 @app.route("/login", methods=["POST"])
 def handle_login():
     data = request.get_json()
@@ -364,10 +364,24 @@ def handle_login():
         user = User.query.filter_by(username=username).first()
         
         if user and user.password == password:
-            message = "Login successful"
-            return jsonify({"message":message})
+            response = {
+               " message ":"Login successful",
+                 "notification":"Welcome back"
+            }
+            login_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            login_info.append({'username': username, 'login_time': login_time})
+            
+            return jsonify(response)
         else:
             return jsonify ({"message": "Invalid username or password"}), 401
+        
+@app.route("/get-login", methods=['GET'])
+def get_welcome():
+    response = {
+        'status': 'success',
+        'results': login_info
+    }
+    return jsonify(response), 200
 
 @app.route("/download-file", methods=['GET'])
 def download_file():

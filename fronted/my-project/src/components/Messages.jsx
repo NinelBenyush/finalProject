@@ -3,6 +3,7 @@ import axios from "axios";
 
 function Messages() {
     const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [greeting, setGreeting] = useState([]);
 
     useEffect(() => {
         async function fetchUploadedFiles() {
@@ -17,6 +18,18 @@ function Messages() {
         fetchUploadedFiles();
     }, []);
 
+    useEffect(() => {
+        async function fetchLogin(){
+            try{
+                const response = await axios.get('http://localhost:5000/get-login');
+                setGreeting(response.data.results);
+            }catch(error) {
+                console.error("Error", error);
+            }
+        }
+        fetchLogin();
+    }, []);
+
     return (
         <>
             <ul
@@ -24,7 +37,8 @@ function Messages() {
                 role="feed"
                 className="relative flex flex-col gap-12 py-12 pl-6 before:absolute before:top-0 before:left-6 before:h-full before:-translate-x-1/2 before:border before:border-dashed before:border-slate-200 after:absolute after:top-6 after:left-6 after:bottom-6 after:-translate-x-1/2 after:border after:border-slate-200 "
             >
-                <li role="article" className="relative pl-6">
+              {greeting.map((user,index) => ( 
+                <li role="article" key={index} className="relative pl-6">
                     <span className="absolute left-0 z-10 flex items-center justify-center w-8 h-8 -translate-x-1/2 rounded-full bg-slate-200 text-slate-700 ring-2 ring-white ">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -44,11 +58,13 @@ function Messages() {
                     </span>
                     <div className="flex flex-col flex-1 gap-0">
                         <h4 className="text-sm font-medium text-slate-700">
-                            Welcome back
+                           Welcome back {user.username}
                         </h4>
-                        <p className="text-xs text-slate-500">13:12pm</p>
+                        <p className="text-xs text-slate-500">{user.login_time}</p>
                     </div>
                 </li>
+            ))}
+
                 {uploadedFiles.map((file, index) => (
                     <li role="article" key={index} className="relative pl-6">
                         <span className="absolute left-0 z-10 flex items-center justify-center w-8 h-8 -translate-x-1/2 rounded-full bg-slate-200 text-slate-700 ring-2 ring-white ">
@@ -70,7 +86,7 @@ function Messages() {
                         </span>
                         <div className="flex flex-col flex-1 gap-0">
                             <h4 className="text-sm font-medium text-slate-700">
-                                {file.fileName}
+                               file {file.fileName} uploaded Successfully
                             </h4>
                             <p className="text-xs text-slate-500">{file.upload_time}</p>
                         </div>
