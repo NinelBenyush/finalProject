@@ -263,6 +263,7 @@ print(inverse_transformed_df)
 
 inverse_transformed_df = inverse_transformed_df.apply(lambda x: x.astype(int))
 print(inverse_transformed_df)
+inverse_transformed_df.to_csv("results1.csv")
 
 
 

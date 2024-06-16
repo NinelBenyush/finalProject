@@ -105,6 +105,7 @@ def clean(file, onlyTheName, file_num):
     new_path = os.path.join("./DataForPredictionAfterCleaning", file_name)
     merged_df.to_csv(new_path)
     print(f"Cleaned data saved to {new_path}")
+    #print(merged_df)
 
     send_for_alg(new_path)
 
