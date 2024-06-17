@@ -8,14 +8,15 @@ import { ImFileExcel } from "react-icons/im";
 const Results = () => {
     const [results, setResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const resultsPerPage = 10;
+    const resultsPerPage = 6;
 
     useEffect(() => {
         const fetchResults = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/profile/results');
                 console.log('Server Response:', response.data);
-                setResults(response.data.results);
+                const sortedResults = response.data.results.sort((a, b) => new Date(b.date) - new Date(a.date));
+                setResults(sortedResults);
             } catch (error) {
                 console.log("Error:", error);
             }
