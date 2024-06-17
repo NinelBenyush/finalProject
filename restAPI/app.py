@@ -325,10 +325,13 @@ def handle_post():
 
         res_file_path = work_on_file(file_path)
         res_filename = os.path.basename(res_file_path)
+        res_filename, _ = os.path.splitext(res_filename)
+        print(res_filename)
         res_time = datetime.datetime.now()
 
         
         save_to_database(res_filename, res_time)
+        print(f"res file name {res_filename}")
         uploaded_files.append({'fileName': filename, 'upload_time': upload_time})
 
         response = {
@@ -503,14 +506,14 @@ RESULTS_FOLDER = "C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI
 @app.route("/profile/results/<filename>.csv", methods=['GET'])
 def download_right_file(filename):
     print(filename)
-    file_path = os.path.join(RESULTS_FOLDER, filename) 
+    file_path = os.path.join(RESULTS_FOLDER, filename+".csv") 
     file_path = os.path.normpath(file_path)  
     file_path = file_path.replace('\\', '/') 
     print(file_path)
     if os.path.exists(file_path):
         download_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         downloaded_files.append({'filename': filename, 'download_time': download_time})
-        return send_from_directory(directory=FILE_DIRECTORY, path=filename, as_attachment=True), 201
+        return send_from_directory(directory=FILE_DIRECTORY, path=filename+".csv", as_attachment=True), 201
     else:
         return jsonify({"status": "error", "message": "File not found"}), 404
 
