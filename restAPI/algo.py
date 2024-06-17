@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 FINAL_RESULTS_DIRECTORY="C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/results"
+FINAL_RESULTS_PHOTOS ="C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/resultsPng"
 import random
 import numpy as np
 import pandas as pd
@@ -43,19 +44,6 @@ def send_for_alg(filepath):
     inverse_scaled_values = scaler.inverse_transform(final_data[['Inventory', 'Value']])
     final_data[['Inventory', 'Value']] = inverse_scaled_values
     #print(final_data)
-
-    x_train, x_test, y_train, y_test = prepare(final_data)
-
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    input_size = 1
-    num_layers = 3
-    hidden_size = 80 #62 80
-    output_size = 1
-    model = create_lstm_model(input_size, hidden_size, num_layers).to(device)
-    loss_fn = torch.nn.MSELoss(reduction='mean')
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-    #print(model)
-
 
 
 def create_lstm_model(input_size, hidden_size, num_layers):

@@ -10,11 +10,10 @@ from flask_cors import CORS
 import os
 from sqlalchemy import text
 import requests
-from file_processor import work_on_file 
+from file_processor import work_on_file
 from flask_mail import Mail, Message
 import smtplib
 import datetime
-
 
 
 
@@ -70,6 +69,12 @@ class Result(db.Model):
     def __init__(self, fileName, date):
         self.fileName = fileName
         self.date = date
+
+def save_to_database(filename, upload_time):
+    result = Result(fileName=filename, date=upload_time)
+    db.session.add(result)
+    db.session.commit()
+
 
 class BasicInfo(db.Model):
     __bind_key__ = 'basicInfo_db' 
@@ -318,7 +323,12 @@ def handle_post():
         upload_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         #print(upload_time)
 
-        work_on_file(file_path)
+        res_file_path = work_on_file(file_path)
+        res_filename = os.path.basename(res_file_path)
+        res_time = datetime.datetime.now()
+
+        
+        save_to_database(res_filename, res_time)
         uploaded_files.append({'fileName': filename, 'upload_time': upload_time})
 
         response = {
@@ -489,10 +499,10 @@ def get_result():
     
     return jsonify(response), 200
 
-
+RESULTS_FOLDER = "C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/results"
 @app.route("/profile/results/<filename>.csv", methods=['GET'])
 def download_right_file(filename):
-    file_path = os.path.join(FILE_DIRECTORY, filename + '.csv')  # Append the extension to the file_path
+    file_path = os.path.join(RESULTS_FOLDER, filename + '.csv')  # Append the extension to the file_path
     if os.path.exists(file_path):
         download_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         downloaded_files.append({'filename': filename, 'download_time': download_time})

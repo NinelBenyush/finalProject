@@ -1,7 +1,7 @@
+import datetime
 import os
 import numpy as np
 import pandas as pd
-from algo import send_for_alg
 
 counter_file = "count_for_data.txt"
 
@@ -29,7 +29,9 @@ def work_on_file(filePath):
     df = pd.read_excel(filePath)
     location = os.path.join("./DataForPrediction", file_name)
     df.to_csv(location)
-    clean(df, onlyTheName, file_num)
+    res_file_path = clean(df, onlyTheName, file_num)
+   
+    return res_file_path
 
 
 def clean(file, onlyTheName, file_num):
@@ -102,13 +104,19 @@ def clean(file, onlyTheName, file_num):
 
 
     file_name = f"{onlyTheName}_{file_num}.csv"
-    new_path = os.path.join("./DataForPredictionAfterCleaning", file_name)
+    new_path = os.path.join("./results", file_name)
     merged_df.to_csv(new_path)
     print(f"Cleaned data saved to {new_path}")
+
+    send_the_result(new_path, merged_df)
     #print(merged_df)
 
-    send_for_alg(new_path)
+    return new_path
 
+   # send_for_alg(new_path)
+
+def send_the_result(path, df):
+    return path, df
 
 
   
