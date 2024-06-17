@@ -502,11 +502,15 @@ def get_result():
 RESULTS_FOLDER = "C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/results"
 @app.route("/profile/results/<filename>.csv", methods=['GET'])
 def download_right_file(filename):
-    file_path = os.path.join(RESULTS_FOLDER, filename + '.csv')  # Append the extension to the file_path
+    print(filename)
+    file_path = os.path.join(RESULTS_FOLDER, filename) 
+    file_path = os.path.normpath(file_path)  
+    file_path = file_path.replace('\\', '/') 
+    print(file_path)
     if os.path.exists(file_path):
         download_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         downloaded_files.append({'filename': filename, 'download_time': download_time})
-        return send_from_directory(directory=FILE_DIRECTORY, path=filename + '.csv', as_attachment=True), 201
+        return send_from_directory(directory=FILE_DIRECTORY, path=filename, as_attachment=True), 201
     else:
         return jsonify({"status": "error", "message": "File not found"}), 404
 
