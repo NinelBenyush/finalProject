@@ -1,4 +1,5 @@
 import random
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
@@ -33,8 +34,12 @@ final_data = data[["Inventory", "Value", "code_p"]]
 scaler_value = MinMaxScaler()
 scaler_inventory = MinMaxScaler()
 
+
 final_data[['Value']] = scaler_value.fit_transform(final_data[['Value']])
 final_data[['Inventory']] = scaler_inventory.fit_transform(final_data[['Inventory']])
+
+joblib.dump(scaler_value, './scaler_value.pkl')
+joblib.dump(scaler_inventory, './scaler_inventory.pkl')
 
 # Split data into training and testing sets
 train_size = int(len(final_data) * 0.8)
