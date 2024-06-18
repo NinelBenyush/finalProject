@@ -19,63 +19,76 @@ import UploadNewFile from "./components/UploadNewFile";
 import UploadedFiles from "./components/UploadedFiles";
 import Messages from "./components/Messages";
 import Graph from "./components/Graph";
+import ErrorPage from "./components/ErrorPage";
 
 const router = createBrowserRouter([
   {
     path:"/", 
     element: <Home />,
+    errorElement:<ErrorPage />
   },
   {
     path:"/login",
     element: <Login />,
+    errorElement:<ErrorPage />
   },
   {
     path:"/register",
     element:<Register />,
+    errorElement:<ErrorPage />
   },
   {
     path:"/upload-file",
     element: <InsertData />,
+    errorElement:<ErrorPage />
   },
   {
     path:"/download-file",
-    element:<DownloadResult />
-  },
-  {
-    path:"/profile",
-    element:<ProfilePage />
+    element:<DownloadResult />,
+    errorElement:<ErrorPage />
   },
   {
     path:"/basic-info",
     element:<DetailsAccount />,
+    errorElement:<ErrorPage />
   },
   {
+    path:"/profile",
+    element:<ProfilePage />,
+    errorElement:<ErrorPage />
+  },
+
+  {
     path:"/profile/updates",
-    element: <Updates />
+    element: <Updates />,
+    errorElement:<ErrorPage />
   },
   {
     path:"/profile/results",
-    element: <Results />
+    element: <Results />,
+    errorElement:<ErrorPage />
   },
   {
     path:"/UploadNewFile",
     element: <UploadNewFile />,
+    errorElement:<ErrorPage />
   },
   {
     path:"/profile/Files",
-    element: <UploadedFiles />
-  },
-  {
-    path:"/profile/messages",
-    element: <Messages />
+    element: <UploadedFiles />,
+    errorElement:<ErrorPage />
   },
   {
     path:"/check",
-    element :<Graph />
+    element :<Graph />,
+    errorElement:<ErrorPage />
+  },
+  {
+    path:"/profile/messages",
+    element: <Messages />,
+    errorElement :<ErrorPage />
   }
   
-
-
 
 ])
 

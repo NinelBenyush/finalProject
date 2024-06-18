@@ -24,7 +24,7 @@ export const dropdownLinks = [
 
 export const profileLinks = [
   { id:nanoid(), href:"/basic-info", text:"Basic Information"},
-  { id:nanoid(), href:"profile/messages", text:"Messages"},
+  { id:nanoid(), href:"/profile/messages", text:"Messages"},
 ];
 
 export const handleFile = [
