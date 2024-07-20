@@ -86,14 +86,16 @@ class BasicInfo(db.Model):
     phoneNumber = db.Column(db.String(20), nullable=False, unique=True)
     companyDescription = db.Column(db.String(100), nullable=False)
     emailAddress = db.Column(db.String(100))
+    username = db.column(db.String(100))
 
-    def __init__(self, firstName, lastName, companyName, phoneNumber, companyDescription,emailAddress):
+    def __init__(self, firstName, lastName, companyName, phoneNumber, companyDescription,emailAddress,username):
         self.firstName = firstName
         self.lastName = lastName
         self.companyName = companyName
         self.phoneNumber = phoneNumber
         self.companyDescription = companyDescription
         self.emailAddress = emailAddress
+        self.username = username
         
 
 @app.before_first_request
@@ -301,8 +303,8 @@ def create_user(username, password, email):
     db.session.add(new_user)
     db.session.commit()
 
-def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription,emailAddress):
-    new_info = BasicInfo(fName, lName, cName, phoneNumber, cDescription,emailAddress)
+def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription,emailAddress,username):
+    new_info = BasicInfo(fName, lName, cName, phoneNumber, cDescription,emailAddress, username)
     db.session.add(new_info)
     db.session.commit()
 
@@ -543,7 +545,8 @@ def handle_basic_info():
     phoneNumber = data['phoneNumber'].strip()
     cDescription = data['cDescription'].strip()
     email = data['email'].strip()
-    create_new_basic_info(fName, lName, cName, phoneNumber,cDescription,email)
+    username = data['username'].strip()
+    create_new_basic_info(fName, lName, cName, phoneNumber,cDescription,email, username)
 
     return jsonify({"message": "basic info updated successfully"}), 201
 
