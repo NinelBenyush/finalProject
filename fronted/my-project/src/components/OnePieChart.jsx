@@ -64,7 +64,7 @@ const OnePieChart = () => {
 
   return (
     <div className=" rounded-lg overflow-hidden">
-      <canvas style={{ width: '100px', height: '100px' }}  ref={chartRef} width={200} height={200}></canvas>
+      <canvas style={{ width: '10px', height: '10px' }}  ref={chartRef} width={200} height={200}></canvas>
     </div>
   );
 };

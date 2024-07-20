@@ -14,7 +14,7 @@ from file_processor import work_on_file
 from flask_mail import Mail, Message
 import smtplib
 import datetime
-
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 
 app = Flask(__name__)
@@ -23,14 +23,14 @@ CORS(app)
 
 mail = Mail(app)
 
-# Use the correct absolute path to the new database file
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/new_users.db'
 app.config['SQLALCHEMY_BINDS'] = {
     'files_db': 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/uploaded_files.db',
     'results_db': 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/results.db',
     'basicInfo_db':'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/basicInfo.db'
 }
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress a warning
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  
 db = SQLAlchemy(app)
 UPLOAD_FOLDER = "./UPLOAD_FOLDER"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -387,7 +387,10 @@ def handle_register():
         #send_mail_for_r(email)
 
         return jsonify({"message": "User registered successfully"}), 201
-
+    
+app.config['JWT_SECRET_KEY'] = 'orderboost'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(minutes=30)
+jwt = JWTManager(app)
 login_info = []
 @app.route("/login", methods=["POST"])
 def handle_login():
@@ -403,12 +406,18 @@ def handle_login():
                  "notification":"Welcome back"
             }
             login_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            login_info.append({'username': username, 'login_time': login_time})
-            
+            access_token = create_access_token(identity=username)
+            login_info.append({'username': username, 'login_time': login_time, 'token': access_token})
             return jsonify(response)
         else:
             return jsonify ({"message": "Invalid username or password"}), 401
-        
+
+@app.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200 
+
 @app.route("/get-login", methods=['GET'])
 def get_welcome():
     response = {
@@ -513,7 +522,7 @@ def download_right_file(filename):
     if os.path.exists(file_path):
         download_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         downloaded_files.append({'filename': filename, 'download_time': download_time})
-        return send_from_directory(directory=FILE_DIRECTORY, path=filename+".csv", as_attachment=True), 201
+        return send_from_directory(directory=RESULTS_FOLDER, path=filename+".csv", as_attachment=True), 201
     else:
         return jsonify({"status": "error", "message": "File not found"}), 404
 

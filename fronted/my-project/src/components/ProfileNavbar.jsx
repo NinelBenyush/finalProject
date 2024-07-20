@@ -61,17 +61,6 @@ function ProfileNavbar(){
     })}
   </li>
 
-  <li>
-  {download.map((link) => {
-        const { id, href, text} = link;
-             return (
-                  <a key={id} href={href} className="tooltip" data-tip="Download results file">
-                    <FaFileDownload className="h-5 w-5" />
-                     </a>
-                    );
-    })}
-
-  </li>
 
   <li>
   {info.map((link) => {

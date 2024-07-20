@@ -258,6 +258,8 @@ predictions_df = predict(new_df, model, scaler_value, scaler_inventory, sequence
 
 predictions_df = predictions_df.apply(lambda x: x.astype(int))
 
+predictions_df.to_csv("res.csv")
+
 print(predictions_df)
 
 # Output the predictions as CSV

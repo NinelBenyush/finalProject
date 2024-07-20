@@ -4,6 +4,7 @@ import { MdAccountCircle } from "react-icons/md";
 import SectionTitle from "./SectionTitle";
 
 function Profile() {
+  
   return (
     <section className="bg-white py-20 ">
       <div className="align-element grid md:grid-cols-2 items-center gap-16">

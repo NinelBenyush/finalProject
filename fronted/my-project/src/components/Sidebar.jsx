@@ -11,7 +11,7 @@ import { WiSunrise } from "react-icons/wi";
 import { IoSunnyOutline } from "react-icons/io5";
 import TimeLine from './TimeLine';
 import ResultsExplanation from './ResultsExplanation';
-
+import User from './User';
 
 const Sidebar = () => {
   const [sidenav, setSidenav] = useState(true);
@@ -38,6 +38,11 @@ const Sidebar = () => {
     } else {
       return <>Evening <IoMoonOutline className="inline-block" /></>;
     }
+  };
+
+  const username = localStorage.getItem('username');
+  const getChar = () => {
+    return username.charAt(0).toUpperCase();
   };
 
   return (
@@ -69,12 +74,12 @@ const Sidebar = () => {
               <div id="profile" className="space-y-3 flex flex-col items-center">
                 <div className="avatar placeholder">
                   <div className="bg-neutral w-8 md:w-16 rounded-full text-neutral-content flex items-center justify-center">
-                    <span>A</span>
+                    <span>{getChar()}</span>
                   </div>
                 </div>
                 <div>
                   <h2 className="font-medium text-xs md:text-sm text-center text-black">
-                    username
+                    {username}
                   </h2>
                 </div>
               </div>

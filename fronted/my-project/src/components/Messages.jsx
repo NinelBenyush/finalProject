@@ -111,7 +111,7 @@ function Messages() {
                         </span>
                         <div className="flex flex-col flex-1 gap-0">
                             <h4 className="text-sm font-medium text-slate-700">
-                               Welcome back {message.username}
+                               Welcome back Noam Cohen
                             </h4>
                             <p className="text-xs text-slate-500">{message.login_time}</p>
                         </div>
