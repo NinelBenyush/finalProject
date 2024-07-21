@@ -86,7 +86,7 @@ class BasicInfo(db.Model):
     phoneNumber = db.Column(db.String(20), nullable=False, unique=True)
     companyDescription = db.Column(db.String(100), nullable=False)
     emailAddress = db.Column(db.String(100))
-    username = db.column(db.String(100))
+    username = db.Column(db.String(100))
 
     def __init__(self, firstName, lastName, companyName, phoneNumber, companyDescription,emailAddress,username):
         self.firstName = firstName
@@ -119,7 +119,8 @@ def create_tables():
                     companyName VARCHAR(100) NOT NULL,
                     phoneNumber VARCHAR(20) NOT NULL UNIQUE,
                     companyDescription VARCHAR(100) NOT NULL,
-                    emailAddress VARCHAR(100)
+                    emailAddress VARCHAR(100),
+                    username VARCHAR(100)
                     );
                 """)
         db.session.execute(query_info)
@@ -401,15 +402,15 @@ def handle_login():
         username = data['username'].strip()
         password = data['password'].strip()
         user = User.query.filter_by(username=username).first()
-        
+
         if user and user.password == password:
             response = {
                " message ":"Login successful",
-                 "notification":"Welcome back"
+                 "notification":"Welcome back",
+                 "token": create_access_token(identity=username)
             }
             login_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            access_token = create_access_token(identity=username)
-            login_info.append({'username': username, 'login_time': login_time, 'token': access_token})
+            login_info.append({'username': username, 'login_time': login_time, 'token': response['token']})
             return jsonify(response)
         else:
             return jsonify ({"message": "Invalid username or password"}), 401
@@ -479,9 +480,14 @@ def get_files():
 
 @app.route("/profile", methods=['GET'])
 def showPersonalInfo():
-    infos = BasicInfo.query.all()
-    info_list = [
-        {
+    username = request.args.get('username')
+    if not username:
+        return jsonify({'status': 'error', 'message': 'Username is required'}), 400
+    
+    info = BasicInfo.query.filter_by(username=username).first()
+    
+    if info:
+        info_data = {
             'firstName': info.firstName,
             'lastName': info.lastName,
             'companyName': info.companyName,
@@ -489,16 +495,18 @@ def showPersonalInfo():
             'companyDescription': info.companyDescription,
             'emailAddress': info.emailAddress
         }
-        for info in infos
-    ]
-    
-    response = {
-        'status': 'success',
-        'info': info_list
-    }
+        
+        response = {
+            'status': 'success',
+            'info': info_data
+        }
+    else:
+        response = {
+            'status': 'error',
+            'message': 'User information not found'
+        }
     
     return jsonify(response), 200
-
 
 
 downloaded_files = []

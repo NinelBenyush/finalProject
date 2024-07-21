@@ -5,17 +5,12 @@ db_path = "C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/basicI
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Check if the emailAddress column already exists
-cursor.execute("PRAGMA table_info(basicInfo)")
-columns = [column[1] for column in cursor.fetchall()]
-if "emailAddress" not in columns:
-    cursor.execute("ALTER TABLE basicInfo ADD COLUMN emailAddress TEXT")
+# Drop the table if it exists to ensure the schema is updated correctly
+cursor.execute("DROP TABLE IF EXISTS basicInfo")
 
-
-cursor.execute("UPDATE basicInfo SET emailAddress = 'default@example.com' WHERE emailAddress IS NULL")
-
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS basicInfo (
+# Create the table with the correct schema
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS basicInfo (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     firstName TEXT NOT NULL,
     lastName TEXT NOT NULL,
@@ -24,7 +19,8 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS basicInfo (
     companyDescription TEXT NOT NULL,
     emailAddress TEXT,
     username TEXT NOT NULL
-)''')
+)
+''')
 
 # Insert new data
 data = [

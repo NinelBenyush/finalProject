@@ -5,22 +5,32 @@ import { IoPerson } from "react-icons/io5";
 
 function PersonalArea(){
   const [ info, setInfo] =useState([]);
+  const username = localStorage.getItem('username');
+
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    async function fetchInfo(){
-      try{
-        const respone = await axios.get('http://localhost:5000/profile');
-        if(respone.data.status === 'success'){
-          setInfo(respone.data.info[3]);
-        }else{
-          console.error('failed to fetch info', respone.data.message);
-        }
-      }catch(error){
-        console.error('error', error);
+      async function fetchInfo() {
+          try {
+              const response = await axios.get(`http://localhost:5000/profile?username=${username}`);
+              
+              if (response.data.status === 'success') {
+                  setInfo(response.data.info);
+              } else {
+                  console.error('Failed to fetch info', response.data.message);
+                  setError(response.data.message);
+              }
+          } catch (error) {
+              console.error('Error fetching profile info:', error.response ? error.response.data : error.message);
+              setError(error.response ? error.response.data.message : error.message);
+          }
       }
-    }
-    fetchInfo();
-  }, []);
+      fetchInfo();
+  }, [username]);
+
+  if (error) {
+      return <div>{error}</div>;
+  }
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
