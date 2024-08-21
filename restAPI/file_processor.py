@@ -1,3 +1,4 @@
+#clean the excel file and prepare for the LSTM model
 import datetime
 import os
 import numpy as np

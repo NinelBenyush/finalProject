@@ -1,3 +1,4 @@
+#when the user register he will receive an emai
 import os
 from email.message import EmailMessage
 import ssl

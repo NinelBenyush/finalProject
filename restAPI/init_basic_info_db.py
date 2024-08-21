@@ -1,14 +1,12 @@
+#create a db that holds the basic info
 import sqlite3
-
 db_path = "C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/basicInfo.db"
 
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Drop the table if it exists to ensure the schema is updated correctly
 cursor.execute("DROP TABLE IF EXISTS basicInfo")
 
-# Create the table with the correct schema
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS basicInfo (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,7 +20,6 @@ CREATE TABLE IF NOT EXISTS basicInfo (
 )
 ''')
 
-# Insert new data
 data = [
     ('Ninel', 'Benyush', 'example company', '0535353533', 'exampleee', 'example@example.com', 'ninel'),
     ('nine', 'eee', 'eee', '7777', '7777', 'another@example.com', 'nine')

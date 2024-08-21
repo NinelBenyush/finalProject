@@ -1,5 +1,5 @@
+#create a db that holds the uploaded files
 import sqlite3
-
 db_path = 'C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/uploaded_files.db'
 
 conn = sqlite3.connect(db_path)

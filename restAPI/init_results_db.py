@@ -1,5 +1,5 @@
+#create a db that holds the results
 import sqlite3
-
 db_path = 'C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/results.db'
 
 conn = sqlite3.connect(db_path)
