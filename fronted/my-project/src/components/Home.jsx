@@ -5,7 +5,7 @@ import About from "./About";
 import Footer from "./Footer";
 import HowItWork from "./HowItWork";
 
-
+//include all the components for the home page
 function Home(){
     return (
         <>

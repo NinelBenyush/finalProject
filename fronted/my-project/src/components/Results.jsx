@@ -5,6 +5,7 @@ import Footer from './Footer';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { ImFileExcel } from "react-icons/im";
 
+//where you can download the results
 const Results = () => {
     const [results, setResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +32,7 @@ const Results = () => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `${filename}.csv`); // Make sure to append the extension here
+            link.setAttribute('download', `${filename}.csv`); 
             document.body.appendChild(link);
             link.click();
             link.remove();

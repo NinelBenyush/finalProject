@@ -2,6 +2,7 @@ import SectionTitle from "./SectionTitle";
 import OnePieChart from "./OnePieChart";
 import Graph from "./Graph";
 
+//section on the home page
 function HowItWork() {
   return (
     <section className="py-20 bg-gray-50" id="howWork">

@@ -1,5 +1,6 @@
 import errorImg from "../assets/errorImg.svg";
 
+//404 page
 function ErrorPage(){
     return (
 <div class="w-full h-screen flex flex-col lg:flex-row items-center justify-center space-y-16 lg:space-y-0 space-x-8 2xl:space-x-0">

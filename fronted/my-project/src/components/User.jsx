@@ -1,8 +1,8 @@
 import React from 'react';
-
+//the user icon and name
 const User = () => {
   const getUsername = () => {
-    return localStorage.getItem('username') || 'A'; // Default to 'A' if no username
+    return localStorage.getItem('username') || 'A'; 
   };
 
   const username = localStorage.getItem('username');

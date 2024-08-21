@@ -4,7 +4,7 @@ import { LuFileSpreadsheet } from "react-icons/lu";
 import { CiLogin } from "react-icons/ci";
 import { IoIosNotifications } from "react-icons/io";
 import "./index.css";
-
+//all the links for handle re-directing and more
 
 export const links = [
   { id: nanoid(), href: '/', text: 'Home' },

@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-
+//example of graph in the home page
 function Graph(){
     const [chartData] = React.useState([112, 45, 225, 134, 101, 80, 50, 100, 200]);
     const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];

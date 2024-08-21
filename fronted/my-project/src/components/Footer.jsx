@@ -1,6 +1,7 @@
 import React from 'react';
 import logoImg from '../assets/logo.png';
 
+
 function Footer() {
   return (
     <footer className="footer items-center p-4 bg-emerald-50 text-black-content">

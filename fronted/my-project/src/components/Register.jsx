@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import registerImg from "../assets/registerImg.svg";
 import { ImEye, ImEyeBlocked } from "react-icons/im";
 
+//register section
 function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

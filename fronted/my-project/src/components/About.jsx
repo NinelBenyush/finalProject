@@ -1,6 +1,7 @@
 import SectionTitle from "./SectionTitle";
 import aboutImg from "../assets/about.svg";
 
+//About section on the home page
 function About(){
     return (
         <section className="bg-white py-20 " id="about">

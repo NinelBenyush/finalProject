@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import loginImg from "../assets/loginImg.svg";
 import { ImEye, ImEyeBlocked } from "react-icons/im";
 
+//login section, check if the user exist or not 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -27,7 +28,7 @@ const Login = () => {
       .then((res) => {
         const { access_token, user } = res.data;
         localStorage.setItem('token', access_token);
-        localStorage.setItem('username', username); // Store username
+        localStorage.setItem('username', username); 
         setMessage(res.data.message);
         setLoading(false);
         navigate('/profile');

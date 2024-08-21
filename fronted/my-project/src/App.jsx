@@ -95,8 +95,8 @@ const router = createBrowserRouter([
 function App(){
 
   useEffect(() => {
-    localStorage.removeItem('token'); // Assuming you store the token in localStorage
-    localStorage.removeItem('user');  // Assuming you store user info in localStorage
+    localStorage.removeItem('token'); 
+    localStorage.removeItem('user');  
   }, []);
 
   useEffect(() => {

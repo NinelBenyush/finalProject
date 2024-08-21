@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import { IoPerson } from "react-icons/io5";
 
+//section with the personal info 
 function PersonalArea(){
   const [ info, setInfo] =useState([]);
   const username = localStorage.getItem('username');

@@ -10,7 +10,7 @@ const FileDownload = () => {
 
     const downloadFile = () => {
         axios.get('http://localhost:5000/download-file', {
-            responseType: 'blob'  // Important for handling binary data
+            responseType: 'blob'  
         })
         .then((response) => {
             const url = window.URL.createObjectURL(new Blob([response.data]));

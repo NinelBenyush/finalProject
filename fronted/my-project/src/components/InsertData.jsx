@@ -5,6 +5,7 @@ import Footer from "./Footer";
 import MiniNavbar from "./MiniNabvar";
 import { useNavigate } from "react-router-dom";
 
+//where you upload your data file
 function InsertData() {
   const navigate = useNavigate();
   const [fileName, setFileName] = useState('');
@@ -38,7 +39,6 @@ function InsertData() {
         },
       });
       console.log('File uploaded successfully:', response.data);
-      // Reset the file state after successful upload
       setFile(null);
       setFileName('');
       setSuccessUpload(true); 

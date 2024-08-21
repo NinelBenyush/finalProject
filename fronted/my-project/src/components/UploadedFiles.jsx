@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
+//section that keeps track of all the uploaded files
 function UploadedFiles() {
     const [files, setFiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const filesPerPage = 10; // Number of files per page
+    const filesPerPage = 10; 
 
     useEffect(() => {
         async function fetchFiles() {
@@ -26,7 +27,6 @@ function UploadedFiles() {
         fetchFiles();
     }, []);
 
-    // Calculate pagination
     const indexOfLastFile = currentPage * filesPerPage;
     const indexOfFirstFile = indexOfLastFile - filesPerPage;
     const currentFiles = files.slice(indexOfFirstFile, indexOfLastFile);

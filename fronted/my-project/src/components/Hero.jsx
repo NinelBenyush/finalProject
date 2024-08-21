@@ -1,6 +1,7 @@
 import heroImg from "../assets/hero.svg";
 import {FaTwitter, FaFacebook} from "react-icons/fa";
 
+//landing page
 function Hero(){
     return (
        <div className="bg-emerald-100 py-24 ">

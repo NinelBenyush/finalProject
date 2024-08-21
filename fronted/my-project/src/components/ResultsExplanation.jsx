@@ -2,6 +2,7 @@ import React,{useEffect}  from 'react';
 import { TbFileInfo } from "react-icons/tb";
 import resultsE from "../assets/resultsE.png";
 
+//section on the personal area
 function ResultsExplanation() {
     useEffect(() => {
         const textElement = document.querySelector('.text-with-line-breaks');

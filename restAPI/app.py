@@ -37,7 +37,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 FILE_DIRECTORY = 'C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/DataForPrediction'
 
 class User(db.Model):
-    __tablename__ = 'users'  # Ensure the table name matches
+    __tablename__ = 'users'  
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)

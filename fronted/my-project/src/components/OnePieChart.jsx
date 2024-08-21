@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Chart, PieController, ArcElement, Tooltip, Legend, Title } from 'chart.js';
 
 Chart.register(PieController, ArcElement, Tooltip, Legend, Title);
-
+//section on the home page
 const OnePieChart = () => {
   const chartRef = useRef(null);
 
@@ -51,7 +51,7 @@ const OnePieChart = () => {
           tooltip: {
             callbacks: {
               label: function (tooltipItem) {
-                return tooltipItem.label; // Only show the label, not the value
+                return tooltipItem.label; 
               }
             }
           }

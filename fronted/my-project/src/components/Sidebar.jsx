@@ -13,6 +13,7 @@ import TimeLine from './TimeLine';
 import ResultsExplanation from './ResultsExplanation';
 import User from './User';
 
+//sidebar on the personal area
 const Sidebar = () => {
   const [sidenav, setSidenav] = useState(true);
 

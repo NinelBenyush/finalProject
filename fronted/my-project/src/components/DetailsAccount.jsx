@@ -11,6 +11,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
+//section where you update basic information about yourself and your company
 function DetailsAccount() {
   const [fName, setFName] = useState("");
   const[lName, setLName] = useState("");

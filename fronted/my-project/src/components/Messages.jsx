@@ -3,6 +3,7 @@ import axios from "axios";
 import ProfileNavbar from "./ProfileNavbar";
 import Footer from "./Footer";
 
+//message section for the user to receive notifications about successful login, uploaded files and downloaded results
 function Messages() {
     const [messages, setMessages] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -53,7 +54,6 @@ function Messages() {
     const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
     const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
 
-    // Calculate page numbers
     const pageNumbers = [];
     for (let i = 1; i <= Math.ceil(messages.length / messagesPerPage); i++) {
         pageNumbers.push(i);
