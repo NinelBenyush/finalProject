@@ -3,14 +3,9 @@ import datetime
 import os
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 import torch
+from trainAndPredict import makeModel, prepare_data, predict_by_product
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-input_size = 1
-num_layers = 3
-hidden_size = 80
-dropout = 0.2
 
 counter_file = "count_for_data.txt"
 
@@ -35,8 +30,18 @@ def work_on_file(filePath):
     return res_file_path
 
 def clean(file, onlyTheName, file_num):
-    relevantColumns = file[['code', 'color', 'Value', 'Inventory', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']]
+    seq_length = 4
+
+    # Rename columns
+    file.rename(columns={'Minimun stock': 'Minimum stock'}, inplace=True)
     
+    # Verify column names after renaming
+    print("Columns after renaming:", file.columns)
+
+    # Extract relevant columns
+    relevantColumns = file[['code', 'color', 'Value', 'Inventory', 'Minimum stock', 'purchase_r', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']]
+    print("Relevant columns:", relevantColumns.columns)
+
     hot_encoding = pd.get_dummies(relevantColumns[['color']])
     rColumns = pd.concat([relevantColumns, hot_encoding], axis=1).drop(['color'], axis=1)
 
@@ -44,13 +49,17 @@ def clean(file, onlyTheName, file_num):
         rColumns = rColumns.fillna(0)
     rColumns = rColumns.apply(lambda x: np.where(x < 0, 0, x))
 
+    print("rColumns columns:", rColumns.columns)
+
     months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     rColumns[months] = rColumns[months].apply(pd.to_numeric, errors='coerce')
 
     subset_rColumns = rColumns[['code', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']]
+    print("Subset rColumns columns:", subset_rColumns.columns)
 
     temp_df = pd.melt(subset_rColumns, id_vars=['code'], var_name="Month", value_name='Value')
     temp_df = temp_df.sort_values(by=['code', 'Month'])
+    print("temp_df columns:", temp_df.columns)
 
     month_map = {
         'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12
@@ -58,13 +67,14 @@ def clean(file, onlyTheName, file_num):
     temp_df['Month numeric'] = temp_df['Month'].map(month_map)
 
     temp_df = temp_df.sort_values(by=['code', 'Month numeric']).drop('Month numeric', axis=1)
-    
-    # Remove duplicates in temp_df if any
     temp_df = temp_df.drop_duplicates(subset=['code', 'Month'])
+    print("After dropping duplicates:", temp_df.columns)
 
     df_rest_columns = rColumns.drop(columns=months).drop_duplicates(subset=['code'])
+    print("df_rest_columns columns:", df_rest_columns.columns)
 
     merged_df = pd.merge(df_rest_columns, temp_df, on='code')
+    print("merged_df columns:", merged_df.columns)
 
     name_to_change = {'Value_x': 'Inventory Value', 'Value_y': "Value"}
     merged_df.rename(columns={'Value ': 'Value'}, inplace=True)
@@ -74,30 +84,44 @@ def clean(file, onlyTheName, file_num):
     merged_df['Year'] = 2023
     merged_df['Date'] = pd.to_datetime(merged_df['Month'].astype(str) + ' ' + merged_df['Year'].astype(str), format='%m %Y')
     merged_df.set_index('Date', inplace=True)
+    merged_df.columns = merged_df.columns.str.strip()  
 
+
+    print("Final merged_df ", merged_df)
+
+    input_size = 3  
+    num_layers = 2 
+    hidden_size = 64
+    model_load_path = r"C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/bilstm_model.pth"
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = makeModel(input_size, hidden_size, num_layers).to(device)
+    model.load_state_dict(torch.load(model_load_path, map_location=device))
+    model.eval()
+
+    merged_df, scaler_value, scaler_min_stock, scaler_purchase_r = prepare_data(merged_df)
+
+# Make predictions
+    seq_length = 4
+    predictions = predict_by_product(model, merged_df, seq_length)
+    for code in predictions:
+      predictions[code] = scaler_value.inverse_transform(np.array(predictions[code]).reshape(-1, 1)).flatten()
+      print(predictions[code])
+
+
+    df = pd.DataFrame(dict([(k, pd.Series(v[:12])) for k, v in predictions.items()]))
+    df = df.round().astype(int)
+
+    date_range = pd.date_range(start='2024-01-01', periods=12, freq='MS')
+    formatted_dates = date_range.strftime('%d-%m-%Y')
+
+    df.index = formatted_dates
+
+    print(df)
+
+
+    # Save the merged DataFrame (optional)
     file_name = f"{onlyTheName}_{file_num}.csv"
     new_path = os.path.join("./results", file_name)
-
-    merged_df = merged_df[['code', 'Value']]
-
-    random_values = np.random.uniform(3, 5, size=merged_df.shape[0])
-
-    random_values = np.round(random_values).astype(int)
-
-    random_signs = np.random.choice([-1, 1], size=merged_df.shape[0])
-
-
-    modified_values = np.abs(merged_df['Value'] + random_signs * random_values)
-
-    modified_values[modified_values == 0] = 1
-
-    merged_df['Value'] = modified_values
-
-
-
-    merged_df.to_csv(new_path)
-
-    send_the_result(new_path, merged_df)
     return new_path, merged_df
 
 def send_the_result(path, df):
