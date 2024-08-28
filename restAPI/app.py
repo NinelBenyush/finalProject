@@ -16,13 +16,10 @@ import smtplib
 import datetime
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
-
 app = Flask(__name__)
 CORS(app)
 
-
 mail = Mail(app)
-
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/new_users.db'
 app.config['SQLALCHEMY_BINDS'] = {
@@ -128,7 +125,6 @@ def create_tables():
         db.session.commit()
         
 
-
 def send_mail_for_reminder():
     me = "orderboost2024@gmail.com"
     dest = "ninel.benush@gmail.com"
@@ -164,12 +160,11 @@ def send_mail_for_reminder():
     }
     try:
         response = requests.post("http://localhost:5000/profile/updates", json=reminder_message)
-        response.raise_for_status()  # Raise an error for bad status codes
+        response.raise_for_status() 
         print("Reminder message sent to server successfully")
     except requests.exceptions.RequestException as e:
         print(f"Error sending reminder message to server: {e}")
     return reminder_message
-
 
 
 def send_mail_for_r(email):  #register
@@ -194,6 +189,7 @@ def send_mail_for_r(email):  #register
         s.login(me,"nizs kjcb niwc debn")
         s.sendmail(me, dest, msg.as_string())
         s.quit()
+
 
 def send_predictions(file_path): 
     me = "orderboost2024@gmail.com"
@@ -255,39 +251,14 @@ def send_email_for_upload(filename):
         print(f"error {e}")
 
 
-
-#@app.route('/', methods=['GET'])
-
-
-    #s = smtplib.SMTP('smtp.gmail.com', 587)
-    #s.starttls()
-    #s.login("orderboost2024@gmail.com", "nizs kjcb niwc debn")
-    #msg = 'Welcome'
-    #s.sendmail("orderboost2024@gmail.com","ninel.benush@gmail.com", msg)
-    #s.quit()
-    #return jsonify({"message": "Email sent successfully"})
-
-#@app.route("/")
-#def index():
- #   message = Message(
-  #      subject='Thank you for allowing notifications',
-   #     recipients=['ninelbenush@gmail.com'],
-    #    sender='hi@demomailtrap.com'
-    #)
-    #message.body = "Hey, welcome to the email notifications, we will send you here all the details"
-    #mail.send(message)
-    #return "Message sent!"
-
-
-
 @app.route('/', methods=['GET'])
 def root():
     send_mail_for_reminder()
     return jsonify({"message": "ok"})
 
+
 @app.route('/profile/updates', methods=['GET'])
 def get_updates():
-    # Implement logic to retrieve and return messages
     return jsonify([send_mail_for_reminder()]),200
 
 
@@ -295,7 +266,6 @@ def get_updates():
 def profile_updates():
     reminder_message = request.json
     print("message:", reminder_message)
-    # Add the reminder_message to your database or process it as needed
     return jsonify({"message": "Reminder message received"}), 201
 
 
@@ -304,10 +274,12 @@ def create_user(username, password, email):
     db.session.add(new_user)
     db.session.commit()
 
+
 def create_new_basic_info(fName, lName, cName, phoneNumber, cDescription,emailAddress,username):
     new_info = BasicInfo(fName, lName, cName, phoneNumber, cDescription,emailAddress, username)
     db.session.add(new_info)
     db.session.commit()
+
 
 uploaded_files = []
 latest_res = {}
@@ -324,7 +296,6 @@ def handle_post():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
         upload_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        #print(upload_time)
 
         res_file_path = work_on_file(file_path)
         res_filename = os.path.basename(res_file_path)
@@ -349,6 +320,7 @@ def handle_post():
         return jsonify(response)
     return 'Bad Request', 400
 
+
 @app.route("/get-res", methods=['GET'])
 def get_res():
     global latest_res
@@ -361,6 +333,7 @@ def get_res():
             
     }
     return jsonify(response)
+
 
 @app.route("/uploaded-files", methods=['GET'])
 def get_latest_upload():
@@ -375,7 +348,6 @@ def get_latest_upload():
 def handle_register():
     data = request.get_json()
     if 'username' in data and 'password' in data and 'email' in data:
-            # Register new user
         username = data['username'].strip()
         password = data['password'].strip()
         email = data['email'].strip()
@@ -386,13 +358,13 @@ def handle_register():
             return jsonify({"message": "Account already exists with this email"}), 409
             
         create_user(username, password, email)
-
-        #send_mail_for_r(email)
+        send_mail_for_r(email)
 
         return jsonify({"message": "User registered successfully"}), 201
     
+    
 app.config['JWT_SECRET_KEY'] = 'orderboost'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(minutes=30)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(minutes=5)
 jwt = JWTManager(app)
 login_info = []
 @app.route("/login", methods=["POST"])
@@ -414,12 +386,14 @@ def handle_login():
             return jsonify(response)
         else:
             return jsonify ({"message": "Invalid username or password"}), 401
+        
 
 @app.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200 
+
 
 @app.route("/get-login", methods=['GET'])
 def get_welcome():
@@ -444,6 +418,7 @@ def download_file():
         app.logger.error(f"Error sending file: {e}")
         return str(e), 500
     
+    
 @app.route("/profile", methods=['POST'])
 def confirm_new_file():
     data = request.json
@@ -467,6 +442,7 @@ def confirm_new_file():
         }
         return jsonify(response), 400
     
+    
 @app.route("/profile/files", methods=['GET'])
 def get_files():
     files = UploadFiles.query.all()
@@ -475,8 +451,8 @@ def get_files():
         'status': 'success',
         'files': file_list
     }
-
     return jsonify(response), 200
+
 
 @app.route("/profile", methods=['GET'])
 def showPersonalInfo():
@@ -521,6 +497,7 @@ def get_result():
     
     return jsonify(response), 200
 
+
 RESULTS_FOLDER = "C:/Users/Nina/Desktop/finalProject/finalProjectWebsite/restAPI/results"
 @app.route("/profile/results/<filename>.csv", methods=['GET'])
 def download_right_file(filename):
@@ -535,6 +512,7 @@ def download_right_file(filename):
         return send_from_directory(directory=RESULTS_FOLDER, path=filename+".csv", as_attachment=True), 201
     else:
         return jsonify({"status": "error", "message": "File not found"}), 404
+    
 
 @app.route("/getDownload", methods=['GET'])
 def getDInfo():
@@ -543,6 +521,7 @@ def getDInfo():
         'results':downloaded_files,
     }
     return jsonify(response),200
+
 
 @app.route("/basic-info", methods=['POST'])
 def handle_basic_info():
