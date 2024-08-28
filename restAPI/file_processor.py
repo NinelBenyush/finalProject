@@ -121,6 +121,8 @@ def clean(file, onlyTheName, file_num):
     # Save the merged DataFrame (optional)
     file_name = f"{onlyTheName}_{file_num}.csv"
     new_path = os.path.join("./results", file_name)
+    df.to_csv(new_path)
+    print(f"Saved to {new_path}")
     return new_path, merged_df
 
 def send_the_result(path, df):
