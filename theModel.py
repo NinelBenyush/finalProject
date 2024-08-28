@@ -1,6 +1,3 @@
-from sklearn.ensemble import RandomForestRegressor
-from xgboost import XGBRegressor
-from sklearn.metrics import mean_absolute_error, mean_squared_error
 import seaborn as sns
 import math
 import random
@@ -13,7 +10,6 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 import matplotlib.dates as mdates
 
-# Set random seed for reproducibility
 random_seed = 42
 random.seed(random_seed)
 np.random.seed(random_seed)
@@ -22,7 +18,6 @@ torch.cuda.manual_seed_all(random_seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-# Load and preprocess the data
 data = pd.read_csv("final_data_prediction.csv")
 month_map_reverse = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6,
                      'July': 7, 'August': 8, 'September': 9, 'October': 10, 'Novermber': 11, 'December': 12}
@@ -37,14 +32,11 @@ data_2022.set_index('Date', inplace=True)
 data_2022 = data_2022[["Minimum stock", "Value", "code", "purchase_r"]]
 data_2023 = data[["Minimum stock", "Value", "code", "purchase_r"]]
 
-# Combine the data from 2022 and 2023
 final_data = pd.concat([data_2022, data_2023])
 final_data['Value'] = final_data['Value'].replace(0, np.nan).rolling(window=3).mean().fillna(final_data['Value'])
 final_data['purchase_r'] = final_data['purchase_r'].replace(0, np.nan).rolling(window=3).mean().fillna(final_data['purchase_r'])
 final_data['Minimum stock'] = final_data['Minimum stock'].replace(0, np.nan).rolling(window=3).mean().fillna(final_data['Minimum stock'])
 
-
-# Scaling the features
 scaler_value = MinMaxScaler()
 scaler_Minimum_stock = MinMaxScaler()
 scaler_purchase_r = MinMaxScaler()
@@ -53,14 +45,11 @@ final_data[['Value']] = scaler_value.fit_transform(final_data[['Value']])
 final_data[['Minimum stock']] = scaler_Minimum_stock.fit_transform(final_data[['Minimum stock']])
 final_data[['purchase_r']] = scaler_purchase_r.fit_transform(final_data[['purchase_r']])
 
-# Splitting the data into training and testing sets
 train_len = math.ceil(len(final_data) * 0.8)
 train_data = final_data[:train_len]
 test_data = final_data[train_len:]
+#print(f"Test data shape: {test_data.shape}")
 
-print(f"Test data shape: {test_data.shape}")
-
-# Prepare the sequences for the LSTM model
 seq_length = 4 #3
 x_train, y_train = [], []
 grouped_by = train_data.groupby('code')
@@ -94,7 +83,6 @@ x_test, y_test = np.array(x_test), np.array(y_test)
 x_test = torch.tensor(x_test, dtype=torch.float32)
 y_test = torch.tensor(y_test, dtype=torch.float32)
 
-# Define the LSTM model
 def makeModel(input_size, hidden_size, num_layers):
     class BiLSTMModel(nn.Module):
         def __init__(self, input_size, hidden_size, num_layers): 
@@ -112,7 +100,6 @@ def makeModel(input_size, hidden_size, num_layers):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# Training function
 def training(model, train_loader, test_loader, optimizer, loss_fn, num_epochs, device=device, patience=20):
     train_hist = []
     test_hist = []
@@ -139,7 +126,6 @@ def training(model, train_loader, test_loader, optimizer, loss_fn, num_epochs, d
         average_loss = total_loss / len(train_loader)
         train_hist.append(average_loss)
 
-        # Validation on test data
         model.eval()
         with torch.no_grad():
             total_test_loss = 0.0
@@ -151,20 +137,17 @@ def training(model, train_loader, test_loader, optimizer, loss_fn, num_epochs, d
 
                 total_test_loss += test_loss.item()
 
-            # Calculate average test loss
             average_test_loss = total_test_loss / len(test_loader)
             test_hist.append(average_test_loss)
 
-        # Check if validation loss improved
         if average_test_loss < best_loss:
             best_loss = average_test_loss
-            epochs_no_improve = 0  # Reset counter if validation loss improves
+            epochs_no_improve = 0
         else:
             epochs_no_improve += 1
 
-        # Early stopping
         if epochs_no_improve == patience:
-            print(f'Early stopping at epoch {epoch+1} due to no improvement in validation loss.')
+            print(f'Early stopping at epoch {epoch+1} because there is no improvement in validation loss.')
             break
 
         if (epoch + 1) % 10 == 0:
@@ -172,8 +155,7 @@ def training(model, train_loader, test_loader, optimizer, loss_fn, num_epochs, d
 
     return train_hist, test_hist
 
-
-input_size = 3  # Updated to include "purchase_r" feature
+input_size = 3 
 num_layers = 2 #3
 hidden_size = 64
 
@@ -184,18 +166,15 @@ optimizer = torch.optim.NAdam(model.parameters(), lr=1e-3)
 
 batch_size = 64 #32 16
 
-# Create DataLoader for batch training
 train_dataset = torch.utils.data.TensorDataset(x_train, y_train)
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
  
-# Create DataLoader for batch testing
 test_dataset = torch.utils.data.TensorDataset(x_test, y_test)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-# Train the model
 train_hist, test_hist = training(model, train_loader, test_loader, optimizer, loss_fn, num_epochs=70)
 
-# Plot training and test loss
+"""
 plt.figure(figsize=(14, 7))
 plt.plot(train_hist, label='Train Loss')
 plt.plot(test_hist, label='Test Loss')
@@ -204,8 +183,8 @@ plt.ylabel('Loss')
 plt.title('Training and Test Loss for Nadam Optimizer')
 plt.legend()
 plt.show()
+"""
 
-# Prediction functions
 def predict(model, input_seq):
     model.eval()
     with torch.no_grad():
@@ -224,9 +203,7 @@ def predict_by_product(model, test_data, seq_length, num_predictions=12):
         
         for _ in range(num_predictions):
             pred = predict(model, seq)
-            # Append the last prediction (single step ahead) to the product predictions
             product_predictions.append(pred[-1])
-            # Update the sequence by dropping the first element and appending the new prediction
             new_seq = pred[-1].reshape(1, -1)
             seq = torch.cat((seq[1:], torch.FloatTensor(new_seq).to(device)), dim=0)
         
@@ -238,7 +215,6 @@ def generate_future_dates(start_date, periods):
     dates = pd.date_range(start=start_date, periods=periods, freq='M')
     return dates
 
-# Get the last date from the original data
 last_date = data.index[-1]
 future_dates = generate_future_dates(last_date, 12)
 
@@ -246,28 +222,22 @@ codes_2022 = set(data_2022['code'].unique())
 codes_2023 = set(data_2023['code'].unique())
 common_codes = codes_2022.intersection(codes_2023)
 
-# Filter the test data to include only common codes
 test_data_common = test_data[test_data['code'].isin(common_codes)]
 
-# Perform predictions on common codes only
 predictions = predict_by_product(model, test_data_common, seq_length)
 
 for code in predictions:
     predictions[code] = scaler_value.inverse_transform(np.array(predictions[code]).reshape(-1, 1)).flatten()
 
-# Save predictions to DataFrame
 df = pd.DataFrame(dict([(k, pd.Series(v[:12])) for k, v in predictions.items()]))
 df = df.round().astype(int)
 
-# Generate the correct date range for the future predictions
 date_range = pd.date_range(start='2024-01-01', periods=12, freq='MS')
 formatted_dates = date_range.strftime('%d-%m-%Y')
 
-# Ensure the DataFrame has the correct length
 df.index = formatted_dates
 print(df)
 
-# Save the model
 model_save_path = "bilstm_model.pth"
 torch.save(model.state_dict(), model_save_path)
 

@@ -99,21 +99,20 @@ def clean(file, onlyTheName, file_num):
     model.eval()
 
     merged_df, scaler_value, scaler_min_stock, scaler_purchase_r = prepare_data(merged_df)
+    
 
 # Make predictions
     seq_length = 4
     predictions = predict_by_product(model, merged_df, seq_length)
     for code in predictions:
-      predictions[code] = scaler_value.inverse_transform(np.array(predictions[code]).reshape(-1, 1)).flatten()
-      print(predictions[code])
+       predictions[code] = scaler_value.inverse_transform(np.array(predictions[code]).reshape(-1, 1)).flatten()
+       print(predictions[code])
 
-
-    df = pd.DataFrame(dict([(k, pd.Series(v[:12])) for k, v in predictions.items()]))
+    df = pd.DataFrame({k: pd.Series(v[:12]) for k, v in predictions.items()})
     df = df.round().astype(int)
 
     date_range = pd.date_range(start='2024-01-01', periods=12, freq='MS')
     formatted_dates = date_range.strftime('%d-%m-%Y')
-
     df.index = formatted_dates
 
     print(df)
