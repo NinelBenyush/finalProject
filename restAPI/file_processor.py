@@ -19,6 +19,7 @@ def get_num():
 
     return count
 
+
 def work_on_file(filePath):
     onlyTheName = os.path.splitext(os.path.basename(filePath))[0]
     file_num = get_num()
@@ -29,16 +30,12 @@ def work_on_file(filePath):
     res_file_path, final_df = clean(df, onlyTheName, file_num)
     return res_file_path
 
+
 def clean(file, onlyTheName, file_num):
     seq_length = 4
 
-    # Rename columns
     file.rename(columns={'Minimun stock': 'Minimum stock'}, inplace=True)
     
-    # Verify column names after renaming
-    print("Columns after renaming:", file.columns)
-
-    # Extract relevant columns
     relevantColumns = file[['code', 'color', 'Value', 'Inventory', 'Minimum stock', 'purchase_r', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']]
     print("Relevant columns:", relevantColumns.columns)
 
@@ -49,13 +46,10 @@ def clean(file, onlyTheName, file_num):
         rColumns = rColumns.fillna(0)
     rColumns = rColumns.apply(lambda x: np.where(x < 0, 0, x))
 
-    print("rColumns columns:", rColumns.columns)
-
     months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     rColumns[months] = rColumns[months].apply(pd.to_numeric, errors='coerce')
 
     subset_rColumns = rColumns[['code', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']]
-    print("Subset rColumns columns:", subset_rColumns.columns)
 
     temp_df = pd.melt(subset_rColumns, id_vars=['code'], var_name="Month", value_name='Value')
     temp_df = temp_df.sort_values(by=['code', 'Month'])
@@ -68,13 +62,10 @@ def clean(file, onlyTheName, file_num):
 
     temp_df = temp_df.sort_values(by=['code', 'Month numeric']).drop('Month numeric', axis=1)
     temp_df = temp_df.drop_duplicates(subset=['code', 'Month'])
-    print("After dropping duplicates:", temp_df.columns)
 
     df_rest_columns = rColumns.drop(columns=months).drop_duplicates(subset=['code'])
-    print("df_rest_columns columns:", df_rest_columns.columns)
 
     merged_df = pd.merge(df_rest_columns, temp_df, on='code')
-    print("merged_df columns:", merged_df.columns)
 
     name_to_change = {'Value_x': 'Inventory Value', 'Value_y': "Value"}
     merged_df.rename(columns={'Value ': 'Value'}, inplace=True)
@@ -85,9 +76,7 @@ def clean(file, onlyTheName, file_num):
     merged_df['Date'] = pd.to_datetime(merged_df['Month'].astype(str) + ' ' + merged_df['Year'].astype(str), format='%m %Y')
     merged_df.set_index('Date', inplace=True)
     merged_df.columns = merged_df.columns.str.strip()  
-
-
-    print("Final merged_df ", merged_df)
+    #print("Final merged_df ", merged_df)
 
     input_size = 3  
     num_layers = 2 
@@ -100,8 +89,6 @@ def clean(file, onlyTheName, file_num):
 
     merged_df, scaler_value, scaler_min_stock, scaler_purchase_r = prepare_data(merged_df)
     
-
-# Make predictions
     seq_length = 4
     predictions = predict_by_product(model, merged_df, seq_length)
     for code in predictions:
@@ -114,11 +101,8 @@ def clean(file, onlyTheName, file_num):
     date_range = pd.date_range(start='2024-01-01', periods=12, freq='MS')
     formatted_dates = date_range.strftime('%d-%m-%Y')
     df.index = formatted_dates
+    #print(df)
 
-    print(df)
-
-
-    # Save the merged DataFrame (optional)
     file_name = f"{onlyTheName}_{file_num}.csv"
     new_path = os.path.join("./results", file_name)
     df.to_csv(new_path)
