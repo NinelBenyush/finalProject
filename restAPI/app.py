@@ -305,6 +305,7 @@ def handle_post():
 
         
         save_to_database(res_filename, res_time)
+        send_predictions(res_file_path)
         print(f"res file name {res_filename}")
         uploaded_files.append({'fileName': filename, 'upload_time': upload_time})
 

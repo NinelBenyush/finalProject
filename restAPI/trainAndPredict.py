@@ -68,10 +68,10 @@ def predict_by_product(model, test_data, seq_length, num_predictions=12):
     if isinstance(test_data, torch.Tensor):
         test_data = pd.DataFrame(test_data.numpy(), columns=['Value', 'Minimum stock', 'purchase_r'])
     elif not isinstance(test_data, pd.DataFrame):
-        raise TypeError("test_data should be a DataFrame or Tensor.")
+        raise TypeError("test_data should be a dataframe or tensor.")
 
     if 'code' not in test_data.columns:
-        raise ValueError("The input DataFrame must have a 'code' column for grouping.")
+        raise ValueError("The input DataFrame must have a code column")
     
     predictions = {}
     grouped = test_data.groupby('code')
