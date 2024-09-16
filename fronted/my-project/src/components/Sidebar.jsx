@@ -21,15 +21,6 @@ const Sidebar = () => {
     setSidenav(!sidenav);
   };
 
-  //const [username, setUsername] = useState("");
-
-  //useEffect(() => {
-   // const user = localStorage.getItem('user');
-   // if (user) {
-   //   setUsername(JSON.parse(user).username);
-  //  }
-  //},[]);
-
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) {
