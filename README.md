@@ -23,10 +23,10 @@ For many business owners, especially those working with international suppliers,
 These issues lead to:  
 - ❌ *Lost customers and poor reputation* (when items are out of stock)  
 - 💸 *High storage costs and losses* (when inventory is overstocked)
-
-[![Watch the OrderBoost demo](https://img.youtube.com/vi/X-K7mx3TQOY/0.jpg)](https://www.youtube.com/watch?v=X-K7mx3TQOY)
-
 **OrderBoost** offers a **machine learning–based solution** that analyzes past sales and stock data to **predict future inventory needs**, helping business owners make **data-driven and cost-effective decisions**.
+
+🎬 **Watch the OrderBoost Demo:**  
+[![Watch the OrderBoost demo](https://img.youtube.com/vi/X-K7mx3TQOY/0.jpg)](https://www.youtube.com/watch?v=X-K7mx3TQOY)
 
 ---
 
