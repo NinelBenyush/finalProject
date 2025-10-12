@@ -1,5 +1,5 @@
 #  OrderBoost  📦
-### Intelligent Inventory Management and Forecasting System Powered by Machine Learning  
+### Inventory Management and Forecasting System Powered by Machine Learning  
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
 ![Flask](https://img.shields.io/badge/Flask-Backend-lightgrey?logo=flask)
