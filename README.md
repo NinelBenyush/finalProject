@@ -1,5 +1,4 @@
-# finalProjectWebsite
-# 📦 OrderBoost  
+#  OrderBoost  📦
 ### Intelligent Inventory Management and Forecasting System Powered by Machine Learning  
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
